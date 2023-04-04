@@ -10,7 +10,7 @@ print(user)
 u_id = user.iloc[0]['_id']
 print(u_id)
 
-stats_api = " https://zsr.octane.gg/stats/players" #?player=5f3d8fdd95f40596eae240d3
+stats_api = "https://zsr.octane.gg/stats/players?stat=goals&stat=assists&stat=saves&player=5f3d8fdd95f40596eae23d97" #?player=5f3d8fdd95f40596eae240d3
 # stats_api += "player="+ str(u_id)
 print(stats_api)
 stats = requests.get(stats_api)
