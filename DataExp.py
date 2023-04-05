@@ -17,7 +17,7 @@ stats = requests.get(playerStats_url)
 stats = stats.json()
 stats_keys = stats.keys()
 user_stats = pd.DataFrame(stats['stats'])
-
+user_stats.sort_values("events",inplace=True)
 event_stat = user_stats.iloc[0]['events']
 # print(event_stat)
 event_df = pd.DataFrame(event_stat)
@@ -36,8 +36,6 @@ currEventStats_df = pd.DataFrame(eventStats['stats'])
 gas = currEventStats_df.iloc[0]['stats']
 gas_df = pd.DataFrame(gas.items())
 gas_df.rename(columns={0:'Stat Type', 1: 'Stats'}, inplace = True)
-print(gas_df)
-
 sns.set()
 sns.barplot(data=gas_df, x='Stat Type', y ='Stats')
 plt.show()
