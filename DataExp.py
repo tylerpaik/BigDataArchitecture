@@ -39,7 +39,7 @@ gas_df = pd.DataFrame(gas.items())
 gas_df.rename(columns={0:'Stat Type', 1: 'Stats'}, inplace = True)
 # gas_df.sort_values('startDate')
 sns.set()
-sns.barplot(data=gas_df, x='Stat Type', y ='Stats')
+ax = sns.barplot(data=gas_df, x='Stat Type', y ='Stats')
 plt.show()
 # currEvent_saves = currEventStats_df.iloc['stats']
 # saves.append(currEvent_saves)
@@ -69,3 +69,8 @@ assists = np.array(assists)
 # goals_avg = np.average(goals)
 # assists_avg = np.average(assists)
 
+
+
+
+#testing seaborn html connection
+html = mpld3.fig_to_html(ax.figure)
