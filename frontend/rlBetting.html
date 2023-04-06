@@ -3,42 +3,55 @@
   <head>
     <meta charset="UTF-8">
     <title>Rocket League Pro League Stat Tracker</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="rlBettingStyle.css">
   </head>
   <body>
+
     <div class="tabs">
       <button class="tablink" onclick="openTab('home')">Home</button>
       <button class="tablink" onclick="openTab('visualizations')">Player Stat Visualization</button>
       <button class="tablink" onclick="openTab('predictions')">Betting Line Prediction</button>
+      
     </div>
     <!-- the idea here is to make automated tables for the last NBA matches displaying basic match stats, include team logos and diplay, make the tables look like padlets?, -->
     <!-- suggesting dealing with data part first & then updating design -->
     <div id="home" class="tabcontent">
       <h1>Welcome to the Rocket League Pro League Stat Tracker</h1>
-      <p>This website provides interactive visualizations and statistical analysis of NBA results. Please select a tab to get started.</p>
+      <p>This website provides interactive visualizations and statistical analysis of professional Rocket League results. Please select a tab to get started.</p>
 
-      <h2>Latest NBA Matches</h2>
+      <h2>Latest Rocket League Matches</h2>
       <table id="latest-matches">
         <tr>
           <th>Date</th>
           <th>Teams</th>
           <th>Result</th>
-          <th>1st Quarter</th>
-          <th>2nd Quarter</th>
-          <th>3rd Quarter</th>
-          <th>4th Quarter</th>
-          <th>Most Productive Players</th>
+          <th>Player Scores</th>
+          <th>MVP</th>
         </tr>
       </table>
     </div>
 
-    <div id="visualizations" class="tabcontent">
-      <h1>NBA Results Visualization</h1>
-      <div id="visualization"></div>
+    <div id="visualizations" class="tabcontent" style="display: none">
+      <div class = "searchbar">
+        <input type="text" placeholder="Player Tag">
+        <button type="submit">Search</button>
+      </div>
+      <h1>Player Stat Visualization</h1>
     </div>
 
-    <div id="predictions" class="tabcontent">
-      <h1>NBA Predictions</h1>
+    <div id="predictions" class="tabcontent" style="display: none;">
+      <div class = "searchbar">
+        <input type="text" placeholder="Player Tag">
+        <input type="text" placeholder="Line">
+        <select id="stat" name="stat">
+          <option value="goals">Goals</option>
+          <option value="assists">Assists</option>
+          <option value="saves">Saves</option>
+          <option value="demos">Demos</option>
+        </select>
+        <button type="submit" margin-right="3px">Search</button>
+      </div>
+      <h1>Betting Line Prediction</h1>
       <p>Coming soon...</p>
     </div>
 
