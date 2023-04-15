@@ -1,0 +1,16 @@
+services:
+  restcontainer:
+    build: "."
+    image: lunarreign/esport:latest
+    volumes: 
+      - ./src/
+    container_name: rest
+    restart: unless-stopped
+    ports:
+      - 5000:5000
+    networks:
+      - internalnet
+
+networks:
+  internalnet:
+    driver: bridge

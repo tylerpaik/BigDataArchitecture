@@ -128,4 +128,4 @@ def visualize_player():
 # add visualize_team() separately if needed | create a different button w unique id if doing so
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host = "0.0.0.0")
