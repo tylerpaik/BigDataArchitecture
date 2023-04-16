@@ -11,6 +11,7 @@ matplotlib.use('Agg') # in case plt is used
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+import redis
 
 # create a Flask app instance, default dir
 app = Flask(__name__)
@@ -104,7 +105,9 @@ def calcStats(gamerTag):
     fig_data = base64.b64encode(fig_buffer.getvalue()).decode()
 
     plt.close()
-    return fig_data
+    return u_id, fig_data
+
+redis_client = redis.Redis(host='localhost', port=6379)
 
 # assign routes within Flask
 @app.route('/')
@@ -120,12 +123,15 @@ def teams():
 def visualize_player():
     player_name = request.form.get('player_name')
     if player_name:
-        fig_data = calcStats(player_name)
+        u_id, fig_data = calcStats(player_name)
+        redis_client.set(player_name, u_id)
         return jsonify({'image_data': fig_data})
     else:
         return "Error: Player name is missing.", 400
+
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
 
 if __name__ == '__main__':
     app.run(debug=True, host = "0.0.0.0")
+    redis_client.close()

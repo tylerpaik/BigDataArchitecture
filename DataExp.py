@@ -24,7 +24,7 @@ def calcStats(gamerTag):
     assists = []
     goals = []
     e_id = event_df.iloc[0]['_id'] #changing every time???
-    print(e_id)
+    print(event_df)
     dates = []
     data_length = 11
     for i in range(data_length):
@@ -80,7 +80,7 @@ def calcStats(gamerTag):
 
 
 #------------CONTROLS--------------#
-calcStats("noly")
+calcStats("Noly")
 
 #testing seaborn html connection
 html = mpld3.fig_to_html(ax.figure)
