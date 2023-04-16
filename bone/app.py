@@ -128,6 +128,10 @@ def visualize_player():
         return jsonify({'image_data': fig_data})
     else:
         return "Error: Player name is missing.", 400
+    
+# @app.route('/saved_player')
+# def visualize_saved_player():
+
 
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
