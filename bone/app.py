@@ -14,7 +14,7 @@ import base64
 import redis
 
 # create a Flask app instance, default dir
-app = Flask(__name__)
+app = Flask(__name__, static_folder = "static")
 # get the unique team names for select dropdown purpose, use it?
 # store them locally to avoid multiple api calls
 def get_team_names():
