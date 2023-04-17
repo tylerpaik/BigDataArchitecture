@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Rocket League Pro League Stat Tracker</title>
     <link rel="stylesheet" type="text/css" href="rlBettingStyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
 
@@ -36,8 +37,43 @@
         <input type="text" placeholder="Player Tag">
         <button type="submit">Search</button>
       </div>
-      <h1>Player Stat Visualization</h1>
+      <div class="container">
+        <div class="row mt-5">
+            <div class="col text-center">
+                <h1>Welcome to the Rocket League Statistics Page!</h1>
+            </div>
+        </div>
+        <div class="row mt-5">
+            <div class="col text-center">
+                <button id="statsBtn" class="btn btn-primary">Stats</button>
+                <button id="compareBtn" class="btn btn-secondary">Compare</button>
+            </div>
+        </div>
+        <div class="row mt-5" id="playerSearch" style="display: none;">
+            <div class="col text-center">
+                <input type="text" id="playerName" class="form-control" placeholder="Enter player name">
+                <button id="visualizeBtn" class="btn btn-primary mt-3">Visualize</button>
+            </div>
+        </div>
+        <div class="row mt-5" id="teamSearch" style="display: none;">
+            <div class="col text-center">
+                <select id="team1" class="form-select">
+                    <option selected>Select team 1</option>
+                </select>
+                <select id="team2" class="form-select mt-3">
+                    <option selected>Select team 2</option>
+                </select>
+                <button id="compareVisualizeBtn" class="btn btn-primary mt-3">Visualize</button>
+            </div>
+        </div>
+        <div class="row mt-5" id="charts" style="display: none;">
+            <div class="col text-center">
+                <img id="chartImage" src="" alt="Player Stats Charts">
+            </div>
+        </div>
+      </div>
     </div>
+    
 
     <div id="predictions" class="tabcontent" style="display: none;">
       <div class = "searchbar">
@@ -56,7 +92,37 @@
     </div>
 
 
+    <script>
+      $(document).ready(function () {
+          $("#statsBtn").click(function () {
+              $("#teamSearch").hide();
+              $("#playerSearch").show();
+          });
 
+          $("#compareBtn").click(function () {
+              $("#playerSearch").hide();
+              $("#teamSearch").show();
+              $.getJSON('/teams', function (data) {
+                  const team_names = data.team_names;
+                  for (let i = 0; i < team_names.length; i++) {
+                      $("#team1, #team2").append(`<option value="${team_names[i]}">${team_names[i]}</option>`);
+                  }
+              });
+          });
+
+          $("#visualizeBtn").click(function () {
+              let playerName = $("#playerName").val();
+              if (playerName) {
+                  $.post('/visualize_player', { player_name: playerName }, function (data) {
+                      $("#charts").show();
+                      $("#chartImage").attr("src", "data:image/png;base64," + data.image_data);
+                  });
+              } else {
+                  alert("Please enter a player name.");
+              }
+          });
+      });
+    </script>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="visualization.js"></script>
     <script src="tabs.js"></script>
