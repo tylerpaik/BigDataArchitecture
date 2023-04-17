@@ -83,18 +83,18 @@ def calcStats(gamerTag):
     averages.append(np.average(np.array(assists)))
     avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves Avg.', 'Goals Avg.', 'Assists Avg.']})
 
-    fig, axes = plt.subplots(4)
-    sns.lineplot(ax = axes[0], data=saves_df, x='Date', y ='Saves')  #line plot for saves
-    axes[0].set_title("Saves in the last 10 games")
+    fig, axes = plt.subplots(2,2)
+    sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves
+    axes[0][0].set_title("Saves in the last 10 events")
 
-    sns.lineplot(ax = axes[1], data=goals_df, x ='Date', y = 'Goals') #line plot for goals
-    axes[1].set_title("Goals in the last 10 games")
+    sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals') #line plot for goals
+    axes[0][1].set_title("Goals in the last 10 events")
 
-    sns.lineplot(ax = axes[2], data=assists_df, x = 'Date', y = 'Assists') #line plot for assists
-    axes[2].set_title("Assists in the last 10 games")
+    sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists') #line plot for assists
+    axes[1][0].set_title("Assists in the last 10 events")
 
-    sns.barplot(ax = axes[3], data=avg_df, x='Stat Type', y='Averages') #bar plot for averages
-    axes[3].set_title("Average Stats for the last 10 games")
+    sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages') #bar plot for averages
+    axes[1][1].set_title("Average Stats for the last 10 events")
 
     fig.subplots_adjust(hspace = 2)
     # replace plt.show() here
