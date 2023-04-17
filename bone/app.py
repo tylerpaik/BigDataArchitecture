@@ -112,7 +112,7 @@ redis_client = redis.Redis(host='localhost', port=6379)
 # assign routes within Flask
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('rlBetting.html')
 
 @app.route('/teams')
 def teams():
