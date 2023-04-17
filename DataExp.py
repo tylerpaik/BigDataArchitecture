@@ -82,7 +82,6 @@ def calcStats(gamerTag):
 def teams_calcStats(team1, team2):
     team1URL = "https://zsr.octane.gg/teams?name=" + team1
     team2URL = "https://zsr.octane.gg/teams?name=" + team2
-    # uidURL = "https://zsr.octane.gg/teams/active?name=" + gamerTag
     response_team1 = requests.get(team1URL)
     response_team2 = requests.get(team2URL)
     response_team1 = response_team1.json()
@@ -100,7 +99,6 @@ def teams_calcStats(team1, team2):
     t1eventResponse = t1eventResponse.json()
     t1Event_df = pd.DataFrame(t1eventResponse['stats'])
     t1Event_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
-    t1EventStats = t1Event_df.iloc[0]['events']
     t1Event_df = pd.DataFrame(t1Event_df.iloc[0]['events'])
     # print(t1eventStatResponse['stats'])
     # print(t1Event_df)
@@ -109,39 +107,50 @@ def teams_calcStats(team1, team2):
     goals = []
     assists = []
     score = []
+    dates = []
+    wins_ratio = []
     data_length = 11
-    # for i in range(data_length):
-    e_id = t1Event_df.iloc[0]['_id'] #taking last event id
-    t1eventStats_url = "https://zsr.octane.gg/stats/teams/events?stat=goals&stat=assists&stat=saves&stat=score&event=" + str(e_id) + "&team=" + str(team1_id)
-    t1eventStats = requests.get(t1eventStats_url)
-    t1eventStats = t1eventStats.json()
-    t1currEventStats_df = pd.DataFrame(t1eventStats['stats']) #all event data into dataframe
-    print(t1currEventStats_df)
-    t1currEventStats_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
-    gas = t1currEventStats_df.iloc[0]['stats']
-    gas_df = pd.DataFrame(gas.items()) #putting event stats into dataframe
-    print(gas_df)
-    gas_df["startDate"] = t1currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
-    # if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
-    #     saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
-    #     goals.append(gas_df.iloc[1][1])
-    #     assists.append(gas_df.iloc[0][1])
-    #     dates.append(gas_df.iloc[0]["startDate"])
-    # else: 
-    #     data_length +=1 
-
+    for i in range(data_length):
+        e_id = t1Event_df.iloc[i]['_id'] #taking last event id
+        t1eventStats_url = "https://zsr.octane.gg/stats/teams/events?stat=goals&stat=assists&stat=saves&stat=score&event=" + str(e_id) + "&team=" + str(team1_id)
+        t1eventStats = requests.get(t1eventStats_url)
+        t1eventStats = t1eventStats.json()
+        t1currEventStats_df = pd.DataFrame(t1eventStats['stats']) #all event data into dataframe
+        # print(t1currEventStats_df)
+        t1currEventStats_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
+        gas = t1currEventStats_df.iloc[0]['stats']
+        match_data = t1currEventStats_df.iloc[0]['matches']
+        gas_df = pd.DataFrame(gas.items()) #putting event stats into dataframe
+        match_df = pd.DataFrame(match_data.items()) #putting match stats into dataframe
+        gas_df["startDate"] = t1currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
+        # print(gas_df.iloc[1][1])
+        # print(gas_df)
+        # print(match_data)
+        if gas_df.iloc[3][1] != None and gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
+            saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
+            goals.append(gas_df.iloc[1][1])
+            assists.append(gas_df.iloc[0][1])
+            score.append(gas_df.iloc[3][1])
+            dates.append(gas_df.iloc[0]["startDate"])
+            wins_ratio.append(match_df.iloc[2][1]/match_df.iloc[0][1])
+        else: 
+            data_length +=1
 
     for j in range(len(dates)):
         dates[j] = dates[j][:7] #get only date from timestamp string (makes it more readable)
-    temp1 = sorted(zip(dates, saves, goals, assists)) #sorting parallel lists
+    temp1 = sorted(zip(dates, saves, goals, assists, score, wins_ratio)) #sorting parallel lists
     temp2 = list(zip(*temp1)) #unzipping sorted data
     dates = list(temp2[0])
     saves = list(temp2[1])
     goals = list(temp2[2])
     assists = list(temp2[3])
+    score = list(temp2[4])
+    wins_ratio = list(temp2[5])
     saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
     goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
     assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
+    score_df = pd.DataFrame({'Score': score, 'Date': dates})
+    wins_ratio_df = pd.DataFrame({'Wins/Total Games': wins_ratio, 'Date': dates})
 
     averages = []
     averages.append(np.average(np.array(saves))) #taking averages of last 10 stats
@@ -149,18 +158,24 @@ def teams_calcStats(team1, team2):
     averages.append(np.average(np.array(assists)))
     avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves Avg.', 'Goals Avg.', 'Assists Avg.']})
 
-    fig, axes = plt.subplots(4)
-    sns.lineplot(ax = axes[0], data=saves_df, x='Date', y ='Saves')  #line plot for saves 
-    axes[0].set_title("Saves in the last 10 games")
+    fig, axes = plt.subplots(2,3)
+    sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves 
+    axes[0][0].set_title("Saves in the last 10 events")
 
-    sns.lineplot(ax = axes[1], data=goals_df, x ='Date', y = 'Goals') #line plot for goals
-    axes[1].set_title("Goals in the last 10 games")
+    sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals') #line plot for goals
+    axes[0][1].set_title("Goals in the last 10 events")
 
-    sns.lineplot(ax = axes[2], data=assists_df, x = 'Date', y = 'Assists') #line plot for assists
-    axes[2].set_title("Assists in the last 10 games")
+    sns.lineplot(ax = axes[0][2], data=assists_df, x = 'Date', y = 'Assists') #line plot for assists
+    axes[0][2].set_title("Assists in the last 10 events")
 
-    sns.barplot(ax = axes[3], data=avg_df, x='Stat Type', y='Averages') #bar plot for averages
-    axes[3].set_title("Average Stats for the last 10 games")
+    sns.lineplot(ax = axes[1][0], data=score_df, x = 'Date', y = 'Score') #line plot for score
+    axes[1][0].set_title("Score in the last 10 events")
+
+    sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages') #bar plot for averages
+    axes[1][1].set_title("Average Stats for the last 10 events")
+
+    sns.lineplot(ax = axes[1][2], data=wins_ratio_df, x = 'Date', y='Wins/Total Games') #lineplot for win/total games for each event
+    axes[1][2].set_title("Wins/Total games for the last 10 events")
 
     fig.subplots_adjust(hspace=0.5)
     plt.show()
