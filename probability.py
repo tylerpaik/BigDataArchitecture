@@ -97,4 +97,4 @@ n_probability = int(input("Enter the number of goals/assists/saves: "))
 # cumpute and print the probability
 probability = calc_probability(n_probability, dataframes[gas_type])
 type_map = {'goals': 'Goals', 'assists': 'Assists', 'saves': 'Saves'}
-print(f"The probability of {n_probability} {type_map[gas_type].lower()} is {probability:.4f}")
+print(f"The probability of {n_probability} {type_map[gas_type].lower()} is {probability:.6f}")
