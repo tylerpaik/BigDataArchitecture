@@ -86,15 +86,24 @@ dataframes = {
     'saves': saves_df
 }
 
-# get input from the user
-gas_type = input("Enter the stats type you want to see (goals, assists, or saves): ").lower()
-while gas_type not in dataframes:
-    print("Invalid input. Choose from (goals, assists, saves)..")
-    gas_type = input("Enter the input type again (goals, assists, or saves): ").lower()
+# keep getting input from user till input = quit
+while True:
+    gas_type = input("\nEnter the stats type you want to see (goals, assists, or saves) or type 'quit' to exit: ").lower()
 
-n_probability = int(input("Enter the number of goals/assists/saves: "))
+    if gas_type == 'quit':
+        print("Exiting the application.")
+        break
 
-# cumpute and print the probability
-probability = calc_probability(n_probability, dataframes[gas_type])
-type_map = {'goals': 'Goals', 'assists': 'Assists', 'saves': 'Saves'}
-print(f"The probability of {n_probability} {type_map[gas_type].lower()} is {probability:.6f}")
+    while gas_type not in dataframes:
+        print("Invalid input. Choose from (goals, assists, saves)..")
+        gas_type = input("Enter the input type again (goals, assists, or saves): ").lower()
+
+    n_probability = int(input("Enter the number of goals/assists/saves: "))
+    # calc prob, print
+    probability = calc_probability(n_probability, dataframes[gas_type])
+    type_map = {'goals': 'Goals', 'assists': 'Assists', 'saves': 'Saves'}
+    print(f"The probability of {n_probability} {type_map[gas_type].lower()} is {probability:.6f}")
+
+
+if __name__ == '__main__':
+    input_and_compute_probability()
