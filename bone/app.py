@@ -1,5 +1,5 @@
 # import for development, hosting locally
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import requests
 import pandas as pd
 import numpy as np
@@ -11,12 +11,71 @@ matplotlib.use('Agg') # in case plt is used
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
-import redis
+import redis as r
+import schedule
+import time
+import threading
 
 # create a Flask app instance, default dir
 app = Flask(__name__, static_folder = "static")
 # get the unique team names for select dropdown purpose, use it?
 # store them locally to avoid multiple api calls
+
+#Instantiate redis db
+redis_client = r.Redis(host='localhost', port=6379, decode_responses=True)
+
+def clear_database():
+    redis_client.flushdb()
+    print("Database cleared")
+
+# Schedule the 'clear_database' function to run every hour
+schedule.every(1).hours.do(clear_database)
+
+def scheduler_loop():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Start the scheduling loop in a separate thread
+scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
+scheduler_thread.start()
+
+# Gets all the data we need from the api, update as needed
+@app.route('/fetch_data_and_store/<string:gamer_tag>', methods=['POST'])
+def fetch_data_and_store(gamer_tag):
+    uidURL = "https://zsr.octane.gg/players?tag=" + gamer_tag
+    response = requests.get(uidURL)
+
+    # Notes: We can check if user_id is in db, if not calculate stats here and store. 
+    if response.status_code == 200:
+        data = response.json()
+        redis_client.hset("user_id", "field1", data["field1"])
+        redis_client.hset("user_id", "field2", data["field2"])
+        redis_client.hset("user_id", "field3", data["field3"])
+        
+        return jsonify({"message": "Data fetched and stored."}), 200
+
+# This would be where we do some visualizations, returns image files
+@app.route('/perform_actions', methods=['GET'])
+def perform_actions():
+    user_id = request.args.get('user_id')
+
+    # Retrieve data from Redis, stored in hash table
+    field1 = r.hget(user_id, 'name').decode('utf-8')
+    field2 = int(r.hget(user_id, 'age'))
+    field3 = r.hget(user_id, 'city').decode('utf-8')
+
+    # Generate a Seaborn plot
+    plot_data = {'field1': [field1], 'field2': [field2], 'field3': [field3]}
+    sns.barplot(x='field1', y='field2', data=plot_data)
+
+    # Save the plot as an image and return it as a response
+    img_io = io.BytesIO()
+    plt.savefig(img_io, format='png', bbox_inches='tight')
+    img_io.seek(0)
+    plt.close()
+    return send_file(img_io, mimetype='image/png')
+    
 def get_team_names():
     url = "https://zsr.octane.gg/teams"
     response = requests.get(url)
@@ -27,7 +86,8 @@ def get_team_names():
 
 # take from Data Exp. generalize for different players
 # create more plots and tables here for a given player
-def calcStats(gamerTag):
+#@app.route('/calc_stats', methods=['POST'])
+def calc_sats(gamerTag):
     uidURL = "https://zsr.octane.gg/players?tag=" + gamerTag
     response = requests.get(uidURL)
     response = response.json()
@@ -107,8 +167,6 @@ def calcStats(gamerTag):
     plt.close()
     return u_id, fig_data
 
-redis_client = redis.Redis(host='localhost', port=6379)
-
 # assign routes within Flask
 @app.route('/')
 def index():
@@ -123,7 +181,7 @@ def teams():
 def visualize_player():
     player_name = request.form.get('player_name')
     if player_name:
-        u_id, fig_data = calcStats(player_name)
+        u_id, fig_data = calc_stats(player_name)
         redis_client.set(player_name, u_id)
         return jsonify({'image_data': fig_data})
     else:
