@@ -23,7 +23,7 @@ def calcStats(gamerTag):
     saves = []
     assists = []
     goals = []
-    e_id = event_df.iloc[0]['_id'] #changing every time???
+    e_id = event_df.iloc[0]['_id'] #changing every time?
     print(event_df)
     dates = []
     data_length = 11
@@ -79,21 +79,14 @@ def calcStats(gamerTag):
     plt.show()
 
 
-def teams_calcStats(team1, team2):
+def teams_calcStats(team1):
     team1URL = "https://zsr.octane.gg/teams?name=" + team1
-    team2URL = "https://zsr.octane.gg/teams?name=" + team2
     response_team1 = requests.get(team1URL)
-    response_team2 = requests.get(team2URL)
     response_team1 = response_team1.json()
-    response_team2 = response_team2.json()
     team1_df = pd.DataFrame(response_team1['teams'])
-    team2_df = pd.DataFrame(response_team2['teams'])
     for index, col in team1_df.iterrows():
         if col[5] == True:
             team1_id = col[0]
-    for index, col in team2_df.iterrows():
-        if col[5] == True:
-            team2_id = col[0]
     team1EventsURL = "https://zsr.octane.gg/stats/teams?stat=goals&stat=assists&stat=saves&stat=score&team=" + team1_id
     t1eventResponse = requests.get(team1EventsURL)
     t1eventResponse = t1eventResponse.json()
