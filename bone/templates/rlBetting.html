@@ -2,26 +2,28 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Rocket League Pro League Stat Tracker</title>
+    <title>RLPLST</title>
     <link rel="stylesheet" type="text/css" href="..\static\rlBettingStyle.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
+    <div class="head">
+      <h1>Rocket League Pro League Stat Tracker</h1>
+    </div>
 
     <div class="tabs">
       <button class="tablink" onclick="openTab('home')">Home</button>
       <button class="tablink" onclick="openTab('visualizations')">Player Stat Visualization</button>
       <button class="tablink" onclick="openTab('predictions')">Betting Line Prediction</button>
-      
     </div>
-    <!-- the idea here is to make automated tables for the last NBA matches displaying basic match stats, include team logos and diplay, make the tables look like padlets?, -->
-    <!-- suggesting dealing with data part first & then updating design -->
     <div id="home" class="tabcontent">
-      <h1>Welcome to the Rocket League Pro League Stat Tracker</h1>
+      <div class="title">
+          <h1>Welcome to the Rocket League Pro League Stat Tracker</h1>
+      </div>
       <p>This website provides interactive visualizations and statistical analysis of professional Rocket League results. Please select a tab to get started.</p>
 
       <h2>Latest Rocket League Matches</h2>
-      <table id="latest-matches">
+      <table id="latest-matches" class="latest">
         <tr>
           <th>Date</th>
           <th>Teams</th>
@@ -33,15 +35,13 @@
     </div>
 
     <div id="visualizations" class="tabcontent" style="display: none">
-      <div class = "searchbar">
+      <!-- <div class = "searchbar">
         <input type="text" placeholder="Player Tag">
         <button type="submit">Search</button>
-      </div>
+      </div> -->
       <div class="container">
-        <div class="row mt-5">
-            <div class="col text-center">
-                <h1>Welcome to the Rocket League Statistics Page!</h1>
-            </div>
+        <div class="title">
+            <h1>Welcome to the Rocket League Statistics Page!</h1>
         </div>
         <div class="row mt-5">
             <div class="col text-center">
@@ -50,13 +50,13 @@
             </div>
         </div>
         <div class="row mt-5" id="playerSearch" style="display: none;">
-            <div class="col text-center">
+            <div class="searchbar">
                 <input type="text" id="playerName" class="form-control" placeholder="Enter player name">
-                <button id="visualizeBtn" class="btn btn-primary mt-3">Visualize</button>
+                <button id="visualizeBtn" type="submit">Visualize</button>
             </div>
         </div>
         <div class="row mt-5" id="teamSearch" style="display: none;">
-            <div class="col text-center">
+            <div class="searchbar">
                 <select id="team1" class="form-select">
                     <option selected>Select team 1</option>
                 </select>
@@ -76,6 +76,9 @@
     
 
     <div id="predictions" class="tabcontent" style="display: none;">
+      <div class="title">
+        <h1>Betting Line Prediction</h1>
+      </div>
       <div class = "searchbar">
         <input type="text" placeholder="Player Tag">
         <input type="text" placeholder="Line">
@@ -87,8 +90,6 @@
         </select>
         <button type="submit" margin-right="3px">Search</button>
       </div>
-      <h1>Betting Line Prediction</h1>
-      <p>Coming soon...</p>
     </div>
 
 
