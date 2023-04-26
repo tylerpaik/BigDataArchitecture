@@ -87,7 +87,7 @@ def get_team_names():
 # take from Data Exp. generalize for different players
 # create more plots and tables here for a given player
 #@app.route('/calc_stats', methods=['POST'])
-def calc_sats(gamerTag):
+def calc_stats(gamerTag):
     uidURL = "https://zsr.octane.gg/players?tag=" + gamerTag
     response = requests.get(uidURL)
     response = response.json()
