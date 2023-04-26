@@ -136,7 +136,7 @@ def calc_stats(gamerTag):
     for dateIndex in range(len(dates)):
         yr = dates[dateIndex][2:4]
         month = dates[dateIndex][-2:]
-        dates[dateIndex] = month + "/" + yr
+        dates[dateIndex] = month + "-" + yr
     saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
     goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
     assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
