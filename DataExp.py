@@ -5,17 +5,20 @@ import json
 import seaborn as sns
 import matplotlib.pyplot as plt
 from datetime import datetime, timezone
+import pprint
 
 def calcStats(gamerTag):
     uidURL = "https://zsr.octane.gg/players?tag=" + gamerTag
     response = requests.get(uidURL)
     response = response.json()
+    pprint.pprint(response)
     user = pd.DataFrame(response['players'])
     u_id = user.iloc[0]['_id']
     print(u_id)
     playerStats_url = "https://zsr.octane.gg/stats/players?stat=goals&stat=assists&stat=saves&player=" + str(u_id)
     stats = requests.get(playerStats_url)
     stats = stats.json()
+    #pprint.pprint(stats['stats'])
     user_stats = pd.DataFrame(stats['stats'])
     user_stats.sort_values("events",inplace=True)
     event_stat = user_stats.iloc[0]['events']
@@ -23,8 +26,13 @@ def calcStats(gamerTag):
     saves = []
     assists = []
     goals = []
+<<<<<<< Updated upstream
     e_id = event_df.iloc[0]['_id'] #changing every time?
     print(event_df)
+=======
+    e_id = event_df.iloc[0]['_id'] #changing every time???
+    #print(event_df)
+>>>>>>> Stashed changes
     dates = []
     data_length = 11
     for i in range(data_length):
@@ -76,7 +84,7 @@ def calcStats(gamerTag):
     axes[3].set_title("Average Stats for the last 10 games")
 
     fig.subplots_adjust(hspace=0.5)
-    plt.show()
+    #plt.show()
 
 
 def teams_calcStats(team1):
@@ -175,8 +183,8 @@ def teams_calcStats(team1):
 
 
 #------------CONTROLS--------------#
-# calcStats("Noly")
-teams_calcStats("FaZe Clan", "G1")
+calcStats("Noly")
+#teams_calcStats("FaZe Clan", "G1")
 
 #testing seaborn html connection
 # html = mpld3.fig_to_html(ax.figure)

@@ -45,15 +45,23 @@ scheduler_thread.start()
 def fetch_data_and_store(gamer_tag):
     uidURL = "https://zsr.octane.gg/players?tag=" + gamer_tag
     response = requests.get(uidURL)
-
+    
+    playerStats_url = "https://zsr.octane.gg/stats/players?stat=goals&stat=assists&stat=saves&player=" + str(u_id)
+    stats = requests.get(playerStats_url)
+    
     # Notes: We can check if user_id is in db, if not calculate stats here and store. 
     if response.status_code == 200:
         data = response.json()
-        redis_client.hset("user_id", "field1", data["field1"])
-        redis_client.hset("user_id", "field2", data["field2"])
-        redis_client.hset("user_id", "field3", data["field3"])
+        #(name of hash set, field name, data)
+        redis_client.hset("player_data", "user_id", data['players'][0]['_id'])
+        redis_client.hset("player_data", "gamer_tag", data['players'][0]['tag'])
+        redis_client.hset("player_data", "team_id", data['players'][0]['team']['_id'])
+        redis_client.hset("player_data", "team_name", data['players'][0]['team']['name'])
         
         return jsonify({"message": "Data fetched and stored."}), 200
+
+    
+
 
 # This would be where we do some visualizations, returns image files
 @app.route('/perform_actions', methods=['GET'])
@@ -70,7 +78,7 @@ def perform_actions():
     sns.barplot(x='field1', y='field2', data=plot_data)
 
     # Save the plot as an image and return it as a response
-    img_io = io.BytesIO()
+    img_io = BytesIO()
     plt.savefig(img_io, format='png', bbox_inches='tight')
     img_io.seek(0)
     plt.close()
@@ -148,29 +156,31 @@ def calc_stats(gamerTag):
     avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves', 'Goals', 'Assists']})
 
     plt.style.use('dark_background')
+    # plt.figure(facecolor='blue')
     fig, axes = plt.subplots(2,2)
-    fig.set_figheight(15)
-    fig.set_figwidth(15)
+    fig.set_figheight(7)
+    fig.set_figwidth(7)
+
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves', errorbar=None)  #line plot for saves
     axes[0][0].set_title("Saves in the last 10 events")
-    # plt.setp(axes[0][0].xaxis.get_majorticklabels(), rotation=30, horizontalalignment='right')
+    axes[0][0].tick_params(axis='x', rotation = 30)
+    # plt.setp(plt.xticks()[0][0], rotation=30, horizontalalignment='right')
 
     sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals', errorbar=None) #line plot for goals
     axes[0][1].set_title("Goals in last 10 events")
+    axes[0][1].tick_params(axis='x', rotation = 30)
+
 
     sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists', errorbar=None) #line plot for assists
     axes[1][0].set_title("Assists in last 10 events")
+    axes[1][0].tick_params(axis='x', rotation = 30)
+
 
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages', errorbar=None) #bar plot for averages
     axes[1][1].set_title("Average Stats in last 10 events")
-
-    # for a in range(0,2):
-    #     for x in range(0,2):
-    #         a[x].set_xticklabels(rotation=45)
-    # axes.set_xticklabels(rotation=45)
-    # fig.tight_layout()
-    fig.subplots_adjust(hspace = 2)
-    fig.autofmt_xdate()
+    axes[1][1].tick_params(axis='x', rotation = 30)
+    
+    fig.subplots_adjust(hspace = .5)
     # replace plt.show() here
     # save the plots as a figure
     fig_buffer = BytesIO()
@@ -200,10 +210,6 @@ def visualize_player():
         return jsonify({'image_data': fig_data})
     else:
         return "Error: Player name is missing.", 400
-    
-# @app.route('/saved_player')
-# def visualize_saved_player():
-
 
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
