@@ -133,6 +133,10 @@ def calc_stats(gamerTag):
     saves = list(temp2[1])
     goals = list(temp2[2])
     assists = list(temp2[3])
+    for dateIndex in range(len(dates)):
+        yr = dates[dateIndex][2:4]
+        month = dates[dateIndex][-2:]
+        dates[dateIndex] = month + "/" + yr
     saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
     goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
     assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
@@ -141,7 +145,7 @@ def calc_stats(gamerTag):
     averages.append(np.average(np.array(saves))) #taking averages of last 10 stats
     averages.append(np.average(np.array(goals)))
     averages.append(np.average(np.array(assists)))
-    avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves Avg.', 'Goals Avg.', 'Assists Avg.']})
+    avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves', 'Goals', 'Assists']})
 
     plt.style.use('dark_background')
     fig, axes = plt.subplots(2,2)
@@ -152,13 +156,13 @@ def calc_stats(gamerTag):
     # plt.setp(axes[0][0].xaxis.get_majorticklabels(), rotation=30, horizontalalignment='right')
 
     sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals', errorbar=None) #line plot for goals
-    axes[0][1].set_title("Goals in the last 10 events")
+    axes[0][1].set_title("Goals in last 10 events")
 
     sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists', errorbar=None) #line plot for assists
-    axes[1][0].set_title("Assists in the last 10 events")
+    axes[1][0].set_title("Assists in last 10 events")
 
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages', errorbar=None) #bar plot for averages
-    axes[1][1].set_title("Average Stats for the last 10 events")
+    axes[1][1].set_title("Average Stats in last 10 events")
 
     # for a in range(0,2):
     #     for x in range(0,2):

@@ -61,7 +61,7 @@
 
 .searchbar {
   margin: auto;
-  margin-top: 5%;
+  margin-top: 2%;
   width: 50%;
   height: 100%;
   display: flex;
@@ -109,12 +109,12 @@
 
 .title {
   margin: auto;
-  margin-top: 5%;
+  margin-top: 2%;
 }
 
 .subtitle {
   margin: auto;
-  margin-top: 5%;
+  margin-top: 2%;
 }
 
 .desc {
