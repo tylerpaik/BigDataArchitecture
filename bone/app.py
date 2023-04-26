@@ -143,8 +143,8 @@ def calc_stats(gamerTag):
     averages.append(np.average(np.array(assists)))
     avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves Avg.', 'Goals Avg.', 'Assists Avg.']})
 
-    fig, axes = plt.subplots(2,2)
     plt.style.use('dark_background')
+    fig, axes = plt.subplots(2,2)
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves', errorbar=None)  #line plot for saves
     axes[0][0].set_title("Saves in the last 10 events")
 
