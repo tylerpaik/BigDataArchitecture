@@ -56,6 +56,31 @@
 
 
 
+/* General Button stuff */
+
+.bigbutton {
+  margin: auto;
+  margin-top: 1%;
+  width: 30%;
+  height: 100%;
+  border: none;
+  font-size: 2em;
+  text-align: center;
+  cursor: pointer;
+}
+
+#return {
+  margin-bottom: 1%;
+}
+
+
+
+
+
+
+
+
+
 
 /* Search bar stuff */
 
@@ -94,6 +119,7 @@
   border: none;
   font-size: 2em;
   text-align: center;
+  cursor: pointer;
 }
 
 

@@ -60,17 +60,23 @@
         <button type="submit">Search</button>
       </div> -->
       <div class="container">
-        <div class="title">
-          <h1>Player Stats Visualization Page</h1>
+        <div class="container">
+          <div class="title" id="visTitle">
+            <h1>Player Stats Visualization Page</h1>
+          </div>
+          <div class="desc" id="visDesc">
+            <p>Select "Stats" to see a player's individual stats in the last 10 events and select "Compare" to compare two teams.</p>
+          </div>
+          <div class="subtitle" id="visLoad" style="display: none;">
+            <h2>Loading stats may take a moment.</h2>
+          </div>
         </div>
-        <div class="desc">
-          <p>Select "Stats" to see a player's individual stats in the last 10 events and select "Compare" to compare two teams.</p>
+        <div class="container">
+            <button id="statsBtn" class="bigbutton">Stats</button>
+            <button id="compareBtn" class="bigbutton">Compare</button>
         </div>
-        <div class="row mt-5">
-            <div class="col text-center">
-                <button id="statsBtn" class="btn btn-primary">Stats</button>
-                <button id="compareBtn" class="btn btn-secondary">Compare</button>
-            </div>
+        <div class="container" id = "returnBtn" style="display: none;">
+          <button id="return" class="bigbutton">Return to Search</button>
         </div>
         <div class="row mt-5" id="playerSearch" style="display: none;">
             <div class="searchbar">
@@ -140,7 +146,19 @@
               });
           });
 
+          $("#returnBtn").click(function () {
+              $("#statsBtn").show();
+              $("#compareBtn").show();
+          });
+
           $("#visualizeBtn").click(function () {
+              $("#playerSearch").hide();
+              $("#statsBtn").hide();
+              $("#compareBtn").hide();
+              $("#returnBtn").show();
+              $("#visTitle").hide();
+              $("#visDesc").hide();
+              $("#visLoad").show();
               let playerName = $("#playerName").val();
               if (playerName) {
                   $.post('/visualize_player', { player_name: playerName }, function (data) {
