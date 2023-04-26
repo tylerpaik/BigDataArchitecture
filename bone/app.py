@@ -171,15 +171,8 @@ def calc_stats(gamerTag):
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages', errorbar=None) #bar plot for averages
     axes[1][1].set_title("Average Stats in last 10 events")
     axes[1][1].tick_params(axis='x', rotation = 30)
-
-
-    # for a in range(0,2):
-    #     for x in range(0,2):
-    #         a[x].set_xticklabels(rotation=45)
-    # axes.set_xticklabels(rotation=45)
-    # fig.tight_layout()
+    
     fig.subplots_adjust(hspace = .5)
-    # fig.autofmt_xdate()
     # replace plt.show() here
     # save the plots as a figure
     fig_buffer = BytesIO()
@@ -209,10 +202,6 @@ def visualize_player():
         return jsonify({'image_data': fig_data})
     else:
         return "Error: Player name is missing.", 400
-    
-# @app.route('/saved_player')
-# def visualize_saved_player():
-
 
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
