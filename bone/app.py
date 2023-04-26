@@ -15,6 +15,7 @@ import redis as r
 import schedule
 import time
 import threading
+from scipy.stats import poisson
 
 # create a Flask app instance, default dir
 app = Flask(__name__, static_folder = "static")
@@ -45,11 +46,11 @@ scheduler_thread.start()
 def fetch_data_and_store(gamer_tag):
     uidURL = "https://zsr.octane.gg/players?tag=" + gamer_tag
     response = requests.get(uidURL)
-    
+
     playerStats_url = "https://zsr.octane.gg/stats/players?stat=goals&stat=assists&stat=saves&player=" + str(u_id)
     stats = requests.get(playerStats_url)
-    
-    # Notes: We can check if user_id is in db, if not calculate stats here and store. 
+
+    # Notes: We can check if user_id is in db, if not calculate stats here and store.
     if response.status_code == 200:
         data = response.json()
         #(name of hash set, field name, data)
@@ -57,10 +58,10 @@ def fetch_data_and_store(gamer_tag):
         redis_client.hset("player_data", "gamer_tag", data['players'][0]['tag'])
         redis_client.hset("player_data", "team_id", data['players'][0]['team']['_id'])
         redis_client.hset("player_data", "team_name", data['players'][0]['team']['name'])
-        
+
         return jsonify({"message": "Data fetched and stored."}), 200
 
-    
+
 
 
 # This would be where we do some visualizations, returns image files
@@ -83,7 +84,7 @@ def perform_actions():
     img_io.seek(0)
     plt.close()
     return send_file(img_io, mimetype='image/png')
-    
+
 def get_team_names():
     url = "https://zsr.octane.gg/teams"
     response = requests.get(url)
@@ -141,7 +142,7 @@ def teams_calcStats(team1):
             dates.append(gas_df.iloc[0]["startDate"])
             wins_ratio.append(game_counts_df.iloc[2][1]/game_counts_df.iloc[0][1])
             game_count.append(gas_df.iloc[0]['games'])
-        else: 
+        else:
             data_length +=1
 
     for j in range(len(dates)):
@@ -174,7 +175,7 @@ def teams_calcStats(team1):
 
     plt.style.use('dark_background')
     fig, axes = plt.subplots(2,3)
-    sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves 
+    sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves
     axes[0][0].set_title("Saves/game in the last 10 events")
     axes[0][0].tick_params(axis='x', rotation = 30)
 
@@ -223,7 +224,7 @@ def calc_stats(gamerTag):
     saves = []
     assists = []
     goals = []
-    e_id = event_df.iloc[0]['_id'] 
+    e_id = event_df.iloc[0]['_id']
     print("event id", e_id)
     dates = []
     game_count = []
@@ -247,7 +248,7 @@ def calc_stats(gamerTag):
             assists.append(gas_df.iloc[0][1])
             dates.append(gas_df.iloc[0]["startDate"])
             game_count.append(gas_df.iloc[0]['games'])
-        else: 
+        else:
             data_length +=1
     for j in range(len(dates)):
         dates[j] = dates[j][:7] #get only date from timestamp string (makes it more readable)
@@ -312,6 +313,80 @@ def calc_stats(gamerTag):
     plt.close()
     return u_id, fig_data_player
 
+# probability functions here, need to change
+def get_probability(gamerTag):
+    uidURL = "https://zsr.octane.gg/players?tag="  + gamerTag
+    response = requests.get(uidURL)
+    response = response.json()
+    user = pd.DataFrame(response['players'])
+    u_id = user.iloc[0]['_id']
+    print(u_id)
+    playerStats_url = "https://zsr.octane.gg/stats/players?stat=goals&stat=assists&stat=saves&player=" + str(u_id)
+    stats = requests.get(playerStats_url)
+    stats = stats.json()
+    user_stats = pd.DataFrame(stats['stats'])
+    user_stats.sort_values("events",inplace=True)
+    event_stat = user_stats.iloc[0]['events']
+    event_df = pd.DataFrame(event_stat)
+    saves = []
+    assists = []
+    goals = []
+    e_id = event_df.iloc[0]['_id'] #changing every time???
+    print(e_id)
+    dates = []
+    data_length = 11
+    for i in range(data_length):
+        e_id = event_df.iloc[i]['_id'] #taking last event id
+        eventStats_url = "https://zsr.octane.gg/stats/players/events?stat=goals&stat=assists&stat=saves&event=" + str(e_id) + "&player=" + str(u_id)
+        eventStats = requests.get(eventStats_url)
+        eventStats = eventStats.json()
+        currEventStats_df = pd.DataFrame(eventStats['stats']) #all event data into dataframe
+        currEventStats_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
+        gas = currEventStats_df.iloc[0]['stats']
+        gas_df = pd.DataFrame(gas.items()) #putting event stats into dataframe
+        gas_df["startDate"] = currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
+        if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
+            saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
+            goals.append(gas_df.iloc[1][1])
+            assists.append(gas_df.iloc[0][1])
+            dates.append(gas_df.iloc[0]["startDate"])
+        else:
+            data_length +=1
+    for j in range(len(dates)):
+
+        dates[j] = dates[j][:7] #get only date from timestamp string (makes it more readable)
+        temp1 = sorted(zip(dates, saves, goals, assists)) #sorting parallel lists
+        temp2 = list(zip(*temp1)) #unzipping sorted data
+        dates = list(temp2[0])
+        saves = list(temp2[1])
+        goals = list(temp2[2])
+        assists = list(temp2[3])
+        saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
+        goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
+        assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
+
+    return {
+        'goals': goals_df,
+        'assists': assists_df,
+        'saves': saves_df
+    }
+
+def calc_probability(n_gas: int, df: pd.DataFrame) -> float:
+    if n_gas < 0:
+        raise ValueError("The number of goals/assists/scores can't be negative.")
+    # stats are always in the first column, extract as a list
+    data = df.iloc[:, 0].tolist()
+    # calculate the mean nr of goals (lambda)
+    mean_gas = sum(data) / len(data)
+    # def Poisson(lambda = mean_gas)
+    poisson_dist = poisson(mean_gas)
+    # store discrete pmf
+    n_gas_prob = poisson_dist.pmf(n_gas)
+    print("The probability of scoring ", n_gas, " units is ", n_gas_prob)
+    return n_gas_prob
+# probability fc end
+
+
 # assign routes within Flask
 @app.route('/')
 def index():
@@ -332,6 +407,17 @@ def visualize_player():
     else:
         return "Error: Player name is missing.", 400
 
+# prob., modify
+@app.route('/predict', methods=['POST'])
+def predict():
+    player_tag = request.form['playerTag']
+    line = int(request.form['line'])
+    stat = request.form['stat']
+
+    dataframes = get_probability(player_tag)
+    probability = calc_probability(line, dataframes[stat])
+    probability = round(probability, 3)
+    return {'probability': probability}
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
 

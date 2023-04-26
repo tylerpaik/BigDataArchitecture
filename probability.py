@@ -7,58 +7,66 @@ import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
 
+# only using this file for testing
+
 # take the following code from calc_stats() in app.py
 # likely break calc_stats() before integration, use 2 extra functions for player stats plotting and probability - avoid more api calls
-uidURL = "https://zsr.octane.gg/players?tag=noly"
-response = requests.get(uidURL)
-response = response.json()
-user = pd.DataFrame(response['players'])
-u_id = user.iloc[0]['_id']
-print(u_id)
-playerStats_url = "https://zsr.octane.gg/stats/players?stat=goals&stat=assists&stat=saves&player=" + str(u_id)
-stats = requests.get(playerStats_url)
-stats = stats.json()
-user_stats = pd.DataFrame(stats['stats'])
-user_stats.sort_values("events",inplace=True)
-event_stat = user_stats.iloc[0]['events']
-event_df = pd.DataFrame(event_stat)
-saves = []
-assists = []
-goals = []
-e_id = event_df.iloc[0]['_id'] #changing every time???
-print(e_id)
-dates = []
-data_length = 11
-for i in range(data_length):
-    e_id = event_df.iloc[i]['_id'] #taking last event id
-    eventStats_url = "https://zsr.octane.gg/stats/players/events?stat=goals&stat=assists&stat=saves&event=" + str(e_id) + "&player=" + str(u_id)
-    eventStats = requests.get(eventStats_url)
-    eventStats = eventStats.json()
-    currEventStats_df = pd.DataFrame(eventStats['stats']) #all event data into dataframe
-    currEventStats_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
-    gas = currEventStats_df.iloc[0]['stats']
-    gas_df = pd.DataFrame(gas.items()) #putting event stats into dataframe
-    gas_df["startDate"] = currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
-    if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
-        saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
-        goals.append(gas_df.iloc[1][1])
-        assists.append(gas_df.iloc[0][1])
-        dates.append(gas_df.iloc[0]["startDate"])
-    else:
-        data_length +=1
-for j in range(len(dates)):
+def get_probability(gamerTag):
+    uidURL = "https://zsr.octane.gg/players?tag="  + gamerTag
+    response = requests.get(uidURL)
+    response = response.json()
+    user = pd.DataFrame(response['players'])
+    u_id = user.iloc[0]['_id']
+    print(u_id)
+    playerStats_url = "https://zsr.octane.gg/stats/players?stat=goals&stat=assists&stat=saves&player=" + str(u_id)
+    stats = requests.get(playerStats_url)
+    stats = stats.json()
+    user_stats = pd.DataFrame(stats['stats'])
+    user_stats.sort_values("events",inplace=True)
+    event_stat = user_stats.iloc[0]['events']
+    event_df = pd.DataFrame(event_stat)
+    saves = []
+    assists = []
+    goals = []
+    e_id = event_df.iloc[0]['_id'] #changing every time???
+    print(e_id)
+    dates = []
+    data_length = 11
+    for i in range(data_length):
+        e_id = event_df.iloc[i]['_id'] #taking last event id
+        eventStats_url = "https://zsr.octane.gg/stats/players/events?stat=goals&stat=assists&stat=saves&event=" + str(e_id) + "&player=" + str(u_id)
+        eventStats = requests.get(eventStats_url)
+        eventStats = eventStats.json()
+        currEventStats_df = pd.DataFrame(eventStats['stats']) #all event data into dataframe
+        currEventStats_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
+        gas = currEventStats_df.iloc[0]['stats']
+        gas_df = pd.DataFrame(gas.items()) #putting event stats into dataframe
+        gas_df["startDate"] = currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
+        if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
+            saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
+            goals.append(gas_df.iloc[1][1])
+            assists.append(gas_df.iloc[0][1])
+            dates.append(gas_df.iloc[0]["startDate"])
+        else:
+            data_length +=1
+    for j in range(len(dates)):
 
-    dates[j] = dates[j][:7] #get only date from timestamp string (makes it more readable)
-    temp1 = sorted(zip(dates, saves, goals, assists)) #sorting parallel lists
-    temp2 = list(zip(*temp1)) #unzipping sorted data
-    dates = list(temp2[0])
-    saves = list(temp2[1])
-    goals = list(temp2[2])
-    assists = list(temp2[3])
-    saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
-    goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
-    assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
+        dates[j] = dates[j][:7] #get only date from timestamp string (makes it more readable)
+        temp1 = sorted(zip(dates, saves, goals, assists)) #sorting parallel lists
+        temp2 = list(zip(*temp1)) #unzipping sorted data
+        dates = list(temp2[0])
+        saves = list(temp2[1])
+        goals = list(temp2[2])
+        assists = list(temp2[3])
+        saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
+        goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
+        assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
 
+    return {
+        'goals': goals_df,
+        'assists': assists_df,
+        'saves': saves_df
+    }
 
 # after getting the 3 data frames, compute probability
 # integrate:
@@ -77,14 +85,20 @@ def calc_probability(n_gas: int, df: pd.DataFrame) -> float:
     poisson_dist = poisson(mean_gas)
     # store discrete pmf
     n_gas_prob = poisson_dist.pmf(n_gas)
+    print("The probability of scoring ", n_gas, " units is ", n_gas_prob)
     return n_gas_prob
 
 # assign a dict to access desired df
-dataframes = {
-    'goals': goals_df,
-    'assists': assists_df,
-    'saves': saves_df
-}
+@app.route('/predict', methods=['POST'])
+def predict():
+    player_tag = request.form['playerTag']
+    line = int(request.form['line'])
+    stat = request.form['stat']
+
+    dataframes = get_probability(player_tag)
+    probability = calc_probability(line, dataframes[stat])
+
+    return {'probability': probability}
 
 # keep getting input from user till input = quit
 while True:

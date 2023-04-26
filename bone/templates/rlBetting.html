@@ -7,7 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
-  
+
 
       <!-- head -->
 
@@ -19,7 +19,7 @@
 
     <!-- tabs -->
 
-    
+
     <div class="bodycontainer">
       <div class="tabs">
         <button class="tablink" onclick="openTab('home')">Home</button>
@@ -109,7 +109,7 @@
 
 
       <!-- Betting Prediction -->
-      
+
 
       <div id="predictions" class="tabcontent" style="display: none;">
         <div class="maincontainer">
@@ -135,8 +135,11 @@
                 <option value="saves">Saves</option>
                 <option value="demos">Demos</option>
               </select>
-              <button type="submit">Search</button>
+              <button id = "search" type="submit">Search</button>
             </div>
+          </div>
+          <div class="container">
+            <div id="probability" class="probability"></div>
           </div>
         </div>
       </div>
@@ -161,6 +164,16 @@
                       $("#team1, #team2").append(`<option value="${team_names[i]}">${team_names[i]}</option>`);
                   }
               });
+          });
+
+          $('#search').on('click', function () {
+            const playerTag = $('#playerTag').val();
+            const line = $('#line').val();
+            const stat = $('#stat').val();
+
+            $.post("/predict", { playerTag, line, stat }, function (data) {
+            $("#probability").text("The probability is: " + data.probability);
+            });
           });
 
           $("#returnBtn").click(function () {
