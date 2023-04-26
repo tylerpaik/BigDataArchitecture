@@ -7,9 +7,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
+  
 
+      <!-- head -->
 
-    <!-- head -->
 
     <div class="head">
       <h1>Rocket League Pro League Stat Tracker</h1>
@@ -18,123 +19,128 @@
 
     <!-- tabs -->
 
-
-    <div class="tabs">
-      <button class="tablink" onclick="openTab('home')">Home</button>
-      <button class="tablink" onclick="openTab('visualizations')">Stat Visualization</button>
-      <button class="tablink" onclick="openTab('predictions')">Betting Line Prediction</button>
-    </div>
-
-
-    <!-- Home -->
-
-
-    <div id="home" class="tabcontent">
-      <div class="title">
-          <h1>Welcome to the Rocket League Pro League Stat Tracker</h1>
-      </div>
-      <div class="desc">
-        <p>This website provides interactive visualizations and statistical analysis of professional Rocket League results. Please select a tab to get started.</p>
-      </div>
-      <div class="subtitle">
-        <h2>Latest Rocket League Matches</h2>
-      </div>
-      <table id="latest-matches" class="latest">
-        <tr>
-          <th>Date</th>
-          <th>Teams</th>
-          <th>Result</th>
-          <th>Player Scores</th>
-          <th>MVP</th>
-        </tr>
-      </table>
-    </div>
-
-
-    <!-- Data Vis -->
-
-
-    <div id="visualizations" class="tabcontent" style="display: none">
-      <!-- <div class = "searchbar">
-        <input type="text" placeholder="Player Tag">
-        <button type="submit">Search</button>
-      </div> -->
-      <div class="container">
-        <div class="container">
-          <div class="title" id="visTitle">
-            <h1>Player and Team Stats Visualization Page</h1>
-          </div>
-          <div class="desc" id="visDesc">
-            <p>Select "Stats" to see a player's individual stats in the last 10 events and select "Compare" to compare two teams.</p>
-          </div>
-          <div class="subtitle" id="visLoad" style="display: none;">
-            <h2>Loading stats may take a moment.</h2>
-          </div>
-        </div>
-        <div class="container">
-            <button id="statsBtn" class="bigbutton">Stats</button>
-            <button id="compareBtn" class="bigbutton">Compare</button>
-        </div>
-        <div class="container" id = "returnBtn" style="display: none;">
-          <button id="return" class="bigbutton">Return to Search</button>
-        </div>
-        <div class="row mt-5" id="playerSearch" style="display: none;">
-            <div class="searchbar">
-                <input type="text" id="playerName" class="form-control" placeholder="Enter player name">
-                <button id="visualizeBtn" type="submit">Visualize</button>
-            </div>
-        </div>
-        <div class="row mt-5" id="teamSearch" style="display: none;">
-            <div class="searchbar">
-                <select id="team1" class="select">
-                    <option selected>Select team 1</option>
-                </select>
-                <select id="team2" class="select">
-                    <option selected>Select team 2</option>
-                </select>
-                <button id="compareVisualizeBtn" type="submit">Visualize</button>
-            </div>
-        </div>
-        <div class="row mt-5" id="charts" style="display: none;">
-            <div class="col text-center">
-                <img id="chartImage" src="" alt="Player Stats Charts">
-            </div>
-        </div>
-      </div>
-    </div>
-
-
-    <!-- Betting Prediction -->
     
+    <div class="bodycontainer">
+      <div class="tabs">
+        <button class="tablink" onclick="openTab('home')">Home</button>
+        <button class="tablink" onclick="openTab('visualizations')">Stat Visualization</button>
+        <button class="tablink" onclick="openTab('predictions')">Betting Line Prediction</button>
+      </div>
 
-    <div id="predictions" class="tabcontent" style="display: none;">
-      <div class="container">
-        <div class="container">
-          <div class="title" id="predTitle">
-            <h1>Betting Line Predictor</h1>
+
+      <!-- Home -->
+
+
+      <div id="home" class="tabcontent">
+        <div class="maincontainer">
+          <div class="title">
+              <h1>Welcome to the Rocket League Pro League Stat Tracker</h1>
           </div>
-          <div class="desc" id="predDesc">
-            <p>Null</p>
+          <div class="desc">
+            <p>This website provides interactive visualizations and statistical analysis of professional Rocket League results. Please select a tab to get started.</p>
           </div>
-          <div class="subtitle" id="predLoad" style="display: none;">
-            <h2>Loading predictions may take a moment.</h2>
+          <div class="subtitle">
+            <h2>Latest Rocket League Matches</h2>
+          </div>
+          <table id="latest-matches" class="latest">
+            <tr>
+              <th>Date</th>
+              <th>Teams</th>
+              <th>Result</th>
+              <th>Player Scores</th>
+              <th>MVP</th>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+
+      <!-- Data Vis -->
+
+
+      <div id="visualizations" class="tabcontent" style="display: none">
+        <!-- <div class = "searchbar">
+          <input type="text" placeholder="Player Tag">
+          <button type="submit">Search</button>
+        </div> -->
+        <div class="maincontainer">
+          <div class="container">
+            <div class="title" id="visTitle">
+              <h1>Player and Team Stats Visualization Page</h1>
+            </div>
+            <div class="desc" id="visDesc">
+              <p>Select "Stats" to see a player's individual stats in the last 10 events and select "Compare" to compare two teams.</p>
+            </div>
+            <div class="subtitle" id="visLoad" style="display: none;">
+              <h2>Loading stats may take a moment.</h2>
+            </div>
+          </div>
+          <div class="container">
+              <button id="statsBtn" class="bigbutton">Stats</button>
+              <button id="compareBtn" class="bigbutton">Compare</button>
+          </div>
+          <div class="container" id = "returnBtn" style="display: none;">
+            <button id="return" class="bigbutton">Return to Search</button>
+          </div>
+          <div class="container" id="playerSearch" style="display: none;">
+              <div class="searchbar">
+                  <input type="text" id="playerName" class="form-control" placeholder="Enter player name">
+                  <button id="visualizeBtn" type="submit">Visualize</button>
+              </div>
+          </div>
+          <div class="container" id="teamSearch" style="display: none;">
+              <div class="searchbar">
+                  <select id="team1" class="select">
+                      <option selected>Select team 1</option>
+                  </select>
+                  <select id="team2" class="select">
+                      <option selected>Select team 2</option>
+                  </select>
+                  <button id="compareVisualizeBtn" type="submit">Visualize</button>
+              </div>
+          </div>
+          <div class="container" id="charts" style="display: none;">
+              <div class="col text-center">
+                  <img id="chartImage" src="" alt="Player Stats Charts">
+              </div>
           </div>
         </div>
-        <div class = "searchbar">
-          <input id="playerTag" type="text" placeholder="Player Tag">
-          <input id="line" type="text" placeholder="Line">
-          <select id="stat" name="stat" >
-            <option value="" selected disabled hidden>Stats</option>
-            <option value="goals">Goals</option>
-            <option value="assists">Assists</option>
-            <option value="saves">Saves</option>
-            <option value="demos">Demos</option>
-          </select>
-          <button type="submit">Search</button>
+      </div>
+
+
+      <!-- Betting Prediction -->
+      
+
+      <div id="predictions" class="tabcontent" style="display: none;">
+        <div class="maincontainer">
+          <div class="container">
+            <div class="title" id="predTitle">
+              <h1>Betting Line Predictor</h1>
+            </div>
+            <div class="desc" id="predDesc">
+              <p>Null</p>
+            </div>
+            <div class="subtitle" id="predLoad" style="display: none;">
+              <h2>Loading predictions may take a moment.</h2>
+            </div>
+          </div>
+          <div class="container">
+            <div class = "searchbar">
+              <input id="playerTag" type="text" class="form-control" placeholder="Player Tag">
+              <input id="line" type="text" placeholder="Line">
+              <select id="stat" name="stat" >
+                <option value="" selected disabled hidden>Stats</option>
+                <option value="goals">Goals</option>
+                <option value="assists">Assists</option>
+                <option value="saves">Saves</option>
+                <option value="demos">Demos</option>
+              </select>
+              <button type="submit">Search</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
 
     <!-- JS -->
 
