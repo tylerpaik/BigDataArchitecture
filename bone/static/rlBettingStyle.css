@@ -112,7 +112,12 @@
   margin-top: 5%;
 }
 
-.desc{
+.subtitle {
+  margin: auto;
+  margin-top: 5%;
+}
+
+.desc {
   margin: auto;
   margin-top: 1%;
 }

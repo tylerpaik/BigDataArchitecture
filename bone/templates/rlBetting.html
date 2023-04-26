@@ -7,22 +7,38 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
   <body>
+
+
+    <!-- head -->
+
     <div class="head">
       <h1>Rocket League Pro League Stat Tracker</h1>
     </div>
+
+
+    <!-- tabs -->
+
 
     <div class="tabs">
       <button class="tablink" onclick="openTab('home')">Home</button>
       <button class="tablink" onclick="openTab('visualizations')">Player Stat Visualization</button>
       <button class="tablink" onclick="openTab('predictions')">Betting Line Prediction</button>
     </div>
+
+
+    <!-- Home -->
+
+
     <div id="home" class="tabcontent">
       <div class="title">
           <h1>Welcome to the Rocket League Pro League Stat Tracker</h1>
       </div>
-      <p>This website provides interactive visualizations and statistical analysis of professional Rocket League results. Please select a tab to get started.</p>
-
-      <h2>Latest Rocket League Matches</h2>
+      <div class="desc">
+        <p>This website provides interactive visualizations and statistical analysis of professional Rocket League results. Please select a tab to get started.</p>
+      </div>
+      <div class="subtitle">
+        <h2>Latest Rocket League Matches</h2>
+      </div>
       <table id="latest-matches" class="latest">
         <tr>
           <th>Date</th>
@@ -33,6 +49,10 @@
         </tr>
       </table>
     </div>
+
+
+    <!-- Data Vis -->
+
 
     <div id="visualizations" class="tabcontent" style="display: none">
       <!-- <div class = "searchbar">
@@ -73,6 +93,9 @@
         </div>
       </div>
     </div>
+
+
+    <!-- Betting Prediction -->
     
 
     <div id="predictions" class="tabcontent" style="display: none;">
@@ -91,6 +114,9 @@
         <button type="submit" margin-right="3px">Search</button>
       </div>
     </div>
+
+
+    <!-- JS -->
 
 
     <script>
