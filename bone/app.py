@@ -112,9 +112,10 @@ def calc_stats(gamerTag):
     saves = []
     assists = []
     goals = []
-    e_id = event_df.iloc[0]['_id'] #changing every time???
+    e_id = event_df.iloc[0]['_id'] 
     print("event id", e_id)
     dates = []
+    game_count = []
     data_length = 11
     for i in range(data_length):
         e_id = event_df.iloc[i]['_id'] #taking last event id
@@ -125,26 +126,36 @@ def calc_stats(gamerTag):
         currEventStats_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
         gas = currEventStats_df.iloc[0]['stats']
         gas_df = pd.DataFrame(gas.items()) #putting event stats into dataframe
+        games = currEventStats_df.iloc[0]["games"] #adding games for averages per game
+        game_counts_df = pd.DataFrame(games.items())
         gas_df["startDate"] = currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
+        gas_df["games"] = game_counts_df.iloc[0][1]
+        print(gas_df)
         if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
-            saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
+            saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates and game count
             goals.append(gas_df.iloc[1][1])
             assists.append(gas_df.iloc[0][1])
             dates.append(gas_df.iloc[0]["startDate"])
-        else:
+            game_count.append(gas_df.iloc[0]['games'])
+        else: 
             data_length +=1
     for j in range(len(dates)):
         dates[j] = dates[j][:7] #get only date from timestamp string (makes it more readable)
-    temp1 = sorted(zip(dates, saves, goals, assists)) #sorting parallel lists
+    temp1 = sorted(zip(dates, game_count,saves, goals, assists)) #sorting parallel lists
     temp2 = list(zip(*temp1)) #unzipping sorted data
-    dates = list(temp2[0])
-    saves = list(temp2[1])
-    goals = list(temp2[2])
-    assists = list(temp2[3])
+    dates = np.array(list(temp2[0]))
+    game_count = np.array(list(temp2[1]))
+    saves = np.array(list(temp2[2]))
+    goals = np.array(list(temp2[3]))
+    assists = np.array(list(temp2[4]))
+    saves = np.divide(saves, game_count) #dividing by number of games in each event
+    goals = np.divide(goals, game_count)
+    assists = np.divide(assists, game_count)
     for dateIndex in range(len(dates)):
         yr = dates[dateIndex][2:4]
         month = dates[dateIndex][-2:]
         dates[dateIndex] = month + "-" + yr
+
     saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
     goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
     assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
@@ -162,24 +173,24 @@ def calc_stats(gamerTag):
     fig.set_figwidth(7)
 
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves', errorbar=None)  #line plot for saves
-    axes[0][0].set_title("Saves in the last 10 events")
+    axes[0][0].set_title("Saves/game in the last 10 events")
     axes[0][0].tick_params(axis='x', rotation = 30)
     # plt.setp(plt.xticks()[0][0], rotation=30, horizontalalignment='right')
 
     sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals', errorbar=None) #line plot for goals
-    axes[0][1].set_title("Goals in last 10 events")
+    axes[0][1].set_title("Goals/game in last 10 events")
     axes[0][1].tick_params(axis='x', rotation = 30)
 
 
     sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists', errorbar=None) #line plot for assists
-    axes[1][0].set_title("Assists in last 10 events")
+    axes[1][0].set_title("Assists/game in last 10 events")
     axes[1][0].tick_params(axis='x', rotation = 30)
 
 
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages', errorbar=None) #bar plot for averages
     axes[1][1].set_title("Average Stats in last 10 events")
     axes[1][1].tick_params(axis='x', rotation = 30)
-    
+
     fig.subplots_adjust(hspace = .5)
     # replace plt.show() here
     # save the plots as a figure
