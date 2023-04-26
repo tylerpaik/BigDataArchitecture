@@ -148,29 +148,38 @@ def calc_stats(gamerTag):
     avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves', 'Goals', 'Assists']})
 
     plt.style.use('dark_background')
+    # plt.figure(facecolor='blue')
     fig, axes = plt.subplots(2,2)
-    fig.set_figheight(15)
-    fig.set_figwidth(15)
+    fig.set_figheight(7)
+    fig.set_figwidth(7)
+
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves', errorbar=None)  #line plot for saves
     axes[0][0].set_title("Saves in the last 10 events")
-    # plt.setp(axes[0][0].xaxis.get_majorticklabels(), rotation=30, horizontalalignment='right')
+    axes[0][0].tick_params(axis='x', rotation = 30)
+    # plt.setp(plt.xticks()[0][0], rotation=30, horizontalalignment='right')
 
     sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals', errorbar=None) #line plot for goals
     axes[0][1].set_title("Goals in last 10 events")
+    axes[0][1].tick_params(axis='x', rotation = 30)
+
 
     sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists', errorbar=None) #line plot for assists
     axes[1][0].set_title("Assists in last 10 events")
+    axes[1][0].tick_params(axis='x', rotation = 30)
+
 
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages', errorbar=None) #bar plot for averages
     axes[1][1].set_title("Average Stats in last 10 events")
+    axes[1][1].tick_params(axis='x', rotation = 30)
+
 
     # for a in range(0,2):
     #     for x in range(0,2):
     #         a[x].set_xticklabels(rotation=45)
     # axes.set_xticklabels(rotation=45)
     # fig.tight_layout()
-    fig.subplots_adjust(hspace = 2)
-    fig.autofmt_xdate()
+    fig.subplots_adjust(hspace = .5)
+    # fig.autofmt_xdate()
     # replace plt.show() here
     # save the plots as a figure
     fig_buffer = BytesIO()
