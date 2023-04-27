@@ -2,12 +2,12 @@
 from flask import Flask, render_template, request
 import schedule
 import threading
-from scipy.stats import poisson
+#from scipy.stats import poisson
 
 from config import redis_client
-from utils import teams, clear_database, scheduler_loop, get_probability, calc_probability
-from data import fetch_data_and_store
-from visualization import visualize_player
+from utils import clear_database, scheduler_loop # calc_probability
+from data import fetch_player, fetch_team, retrieve_player_dfs
+from visualization import visualize_player, visualize_team
 
 # create a Flask app instance, default dir
 app = Flask(__name__, static_folder = "static")
@@ -27,32 +27,35 @@ def index():
     return render_template('rlBetting.html')
 
 # Gets all the data we need from the api, update as needed
-@app.route('/fetch_data_and_store_route', methods=['POST'])
-def fetch_data_and_store_route():
+@app.route('/fetch_player_data_route', methods=['POST'])
+def fetch_player_data_route():
     gamer_tag = request.form.get('player_name')
     print(gamer_tag)
-    player_id = fetch_data_and_store(gamer_tag)
+    player_id = fetch_player(gamer_tag)
     return visualize_player(player_id)
 
-@app.route('/teams')
-def teams_route():
-    return teams()
+@app.route('/fetch_team_data_route', methods=['POST'])
+def fetch_team_data_route():
+    team_name = request.form.get('team_name')
+    print(team_name)
+    team_id = fetch_team(team_name)
+    return visualize_team(team_id)
 
 # @app.route('/visualize_player', methods=['GET'])
 # def visualize_player_route():
 #     return visualize_player()
 
 # prob., modify
-@app.route('/predict', methods=['POST'])
-def predict():
-    player_tag = request.form['playerTag']
-    line = int(request.form['line'])
-    stat = request.form['stat']
+# @app.route('/predict', methods=['POST'])
+# def predict():
+#     player_tag = request.form['playerTag']
+#     line = int(request.form['line'])
+#     stat = request.form['stat']
 
-    dataframes = get_probability(player_tag)
-    probability = calc_probability(line, dataframes[stat])
-    probability = round(probability, 3)
-    return {'probability': probability}
+#     dataframes = retrieve_player_dfs(player_tag)
+#     probability = calc_probability(line, dataframes[stat])
+#     probability = round(probability, 3)
+#     return {'probability': probability}
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
 
