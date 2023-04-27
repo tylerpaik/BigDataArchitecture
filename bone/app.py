@@ -98,11 +98,11 @@ def get_team_names():
 #@app.route('/calc_stats', methods=['POST'])
 
 def teams_calcStats(team1):
-    team1URL = "https://zsr.octane.gg/teams?name=" + team1
+    team1URL = "https://zsr.octane.gg/teams?name=" + team1 #api call
     response_team1 = requests.get(team1URL)
     response_team1 = response_team1.json()
     team1_df = pd.DataFrame(response_team1['teams'])
-    for index, col in team1_df.iterrows():
+    for index, col in team1_df.iterrows(): #getting only useful data
         if col[5] == True:
             team1_id = col[0]
     team1EventsURL = "https://zsr.octane.gg/stats/teams?stat=goals&stat=assists&stat=saves&stat=score&team=" + team1_id
@@ -131,10 +131,7 @@ def teams_calcStats(team1):
         games = t1currEventStats_df.iloc[0]["games"] #adding matches for averages
         game_counts_df = pd.DataFrame(games.items())
         gas_df["startDate"] = t1currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
-        gas_df["games"] = game_counts_df[1][0]
-        # print(gas_df.iloc[1][1])
-        # print(gas_df)
-        # print(game_counts_df)
+        gas_df["games"] = game_counts_df[1][0] #game count
         if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
             saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
             goals.append(gas_df.iloc[1][1])
@@ -159,7 +156,7 @@ def teams_calcStats(team1):
     print(saves)
     print("game count", game_count)
     saves = saves/game_count
-    goals = goals/game_count
+    goals = goals/game_count #[stat] per game calculation
     assists = assists/game_count
 
     saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
@@ -173,7 +170,7 @@ def teams_calcStats(team1):
     averages.append(np.average(np.array(assists)))
     avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves Avg.', 'Goals Avg.', 'Assists Avg.']})
 
-    plt.style.use('dark_background')
+    plt.style.use('dark_background') #making graphs darkmode
     fig, axes = plt.subplots(2,3)
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves
     axes[0][0].set_title("Saves/game in the last 10 events")
@@ -199,7 +196,7 @@ def teams_calcStats(team1):
     fig.delaxes(axes[1][2]) #taking out unused plot
     fig.subplots_adjust(right= 2, hspace=0.5)
     fig_buffer = BytesIO()
-    plt.savefig(fig_buffer, format='png')
+    plt.savefig(fig_buffer, format='png') #returnable graphs
     fig_buffer.seek(0)
     fig_data_team = base64.b64encode(fig_buffer.getvalue()).decode()
 
