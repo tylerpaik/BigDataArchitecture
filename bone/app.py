@@ -1,6 +1,5 @@
 # import for development, hosting locally
-from flask import Flask, render_template, request, jsonify, send_file
-from io import BytesIO
+from flask import Flask, render_template, request
 import schedule
 import threading
 from scipy.stats import poisson
