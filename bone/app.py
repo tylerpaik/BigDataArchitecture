@@ -3,9 +3,10 @@ from flask import Flask, render_template, request, jsonify, send_file
 from io import BytesIO
 import schedule
 import threading
+from scipy.stats import poisson
 
 from config import redis_client
-from utils import teams, clear_database, scheduler_loop
+from utils import teams, clear_database, scheduler_loop, get_probability, calc_probability
 from data import fetch_data_and_store
 from visualization import visualize_player
 
@@ -34,14 +35,6 @@ def fetch_data_and_store_route():
     player_id = fetch_data_and_store(gamer_tag)
     return visualize_player(player_id)
 
-
-# take from Data Exp. generalize for different players
-# create more plots and tables here for a given player
-# @app.route('/calc_stats', methods=['POST'])
-# def calc_stats_route(gamer_tag):
-#     return calc_stats(gamer_tag)
-
-
 @app.route('/teams')
 def teams_route():
     return teams()
@@ -50,6 +43,17 @@ def teams_route():
 # def visualize_player_route():
 #     return visualize_player()
 
+# prob., modify
+@app.route('/predict', methods=['POST'])
+def predict():
+    player_tag = request.form['playerTag']
+    line = int(request.form['line'])
+    stat = request.form['stat']
+
+    dataframes = get_probability(player_tag)
+    probability = calc_probability(line, dataframes[stat])
+    probability = round(probability, 3)
+    return {'probability': probability}
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
 
