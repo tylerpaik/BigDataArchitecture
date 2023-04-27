@@ -177,7 +177,7 @@
               $("#visLoad").show();
               let playerName = $("#playerName").val();
               if (playerName) {
-                  $.post('/visualize_player', { player_name: playerName }, function (data) {
+                  $.post('/fetch_data_and_store_route', { player_name: playerName }, function (data) {
                       $("#charts").show();
                       $("#chartImage").attr("src", "data:image/png;base64," + data.image_data);
                   });
