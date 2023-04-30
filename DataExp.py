@@ -8,6 +8,16 @@ from datetime import datetime, timezone
 import pprint
 import matplotlib.gridspec as gridspec
 
+
+def getID(gamerTag):
+    team1URL = "https://zsr.octane.gg/teams?name=" + gamerTag #api call
+    response = requests.get(team1URL)
+    if response.status_code == 200:
+        data = response.json()
+        pprint.pprint(data)
+    team_id = data['teams'][0]['_id']
+    print(team_id)
+
 def calcStats(gamerTag):
     uidURL = "https://zsr.octane.gg/players?tag=" + gamerTag
     response = requests.get(uidURL)
@@ -202,7 +212,7 @@ def teams_calcStats(team1):
 
 #------------CONTROLS--------------#
 # calcStats("Noly")
-teams_calcStats("FaZe Clan")
+getID("FaZe Clan")
 
 #testing seaborn html connection
 # html = mpld3.fig_to_html(ax.figure)

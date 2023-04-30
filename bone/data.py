@@ -52,7 +52,7 @@ def extract_data(data):
     saves = []
     assists = []
     goals = []
-    e_id = event_df.iloc[0]['_id'] #changing every time???
+    e_id = event_df.iloc[0]['_id']
     print("event id", e_id)
     dates = []
     data_length = 11
