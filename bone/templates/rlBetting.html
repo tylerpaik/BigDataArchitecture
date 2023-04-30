@@ -187,21 +187,41 @@
           });
 
           $("#visualizeBtn").click(function () {
-              $("#playerSearch").hide();
-              $("#statsBtn").hide();
-              $("#compareBtn").hide();
-              $("#returnBtn").show();
-              $("#visTitle").hide();
-              $("#visDesc").hide();
-              $("#visLoad").show();
               let playerName = $("#playerName").val();
               if (playerName) {
-                  $.post('/fetch_data_and_store_route', { player_name: playerName }, function (data) {
+                  $("#playerSearch").hide();
+                  $("#statsBtn").hide();
+                  $("#compareBtn").hide();
+                  $("#returnBtn").show();
+                  $("#visTitle").hide();
+                  $("#visDesc").hide();
+                  $("#visLoad").show();
+                  $.post('/fetch_player_data_route', { player_name: playerName }, function (data) {
                       $("#charts").show();
                       $("#chartImage").attr("src", "data:image/png;base64," + data.image_data);
                   });
               } else {
                   alert("Please enter a player name.");
+              }
+          });
+
+          $("#compareVisualizeBtn").click(function () {
+              let team1 = $("#team1").val();
+              let team2 = $("#team2").val();
+              if (team1 != "Select team 1" && team2 != "Select team 2") {
+                  $("#playerSearch").hide();
+                  $("#statsBtn").hide();
+                  $("#compareBtn").hide();
+                  $("#returnBtn").show();
+                  $("#visTitle").hide();
+                  $("#visDesc").hide();
+                  $("#visLoad").show();
+                  $.post('/fetch_team_data_route', { team1: team1, team2: team2 }, function (data) {
+                      $("#charts").show();
+                      $("#chartImage").attr("src", "data:image/png;base64," + data.image_data);
+                  });
+              } else {
+                  alert("Please enter team names.");
               }
           });
       });
