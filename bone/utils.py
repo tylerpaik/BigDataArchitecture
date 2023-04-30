@@ -9,7 +9,7 @@ from scipy.stats import poisson
 
 from config import redis_client
 
-def clear_database(redis_client):
+def clear_database():
     redis_client.flushdb()
     print("Database cleared")
 
@@ -31,13 +31,8 @@ def scheduler_loop():
 #     return jsonify(team_names=unique_team_names.tolist())
 
 #Pred is for number of goals user wants probability for
-def calc_probability(player_id: str, pred: int) -> float:
-    goals_df, saves_df, assists_df, averages_df = retrieve_player_dfs(player_id)
-    num_goals = np.sum(goals_df)
-
-    #can add functionality for saves/assists
-    num_saves = np.sum(saves_df)
-    num_assists = np.sum(assists_df)
+def calc_probability(n, stat):
+    num_stat = np.sum(stat)
 
     # if n_gas < 0:
     #     raise ValueError("The number of goals/assists/scores can't be negative.")
@@ -45,12 +40,11 @@ def calc_probability(player_id: str, pred: int) -> float:
     # data = df.iloc[:, 0].tolist()
 
     # calculate the mean nr of goals (lambda)
-    mean_goals = num_goals / goals_df.shape[0]
+    mean_stat = num_stat / stat.shape[0]
     # def Poisson(lambda = mean_gas)
-    poisson_dist = poisson(mean_goals)
     # store discrete pmf
-    num_goals_prob = poisson_dist.pmf(pred)
-    print("The probability of scoring ", pred, " goals is ", num_goals_prob)
-    return num_goals_prob
+    num_goals_prob = poisson.cdf(n, mean_stat)
+    print(num_goals_prob)
+    return 1-num_goals_prob
 # probability fc end
 

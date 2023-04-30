@@ -99,7 +99,11 @@ def extract_player_data(data, player_id):
 
     return saves_serialized, goals_serialized, assists_serialized, avg_serialized
 
-def retrieve_player_dfs(player_id):
+def retrieve_player_dfs(player_tag, vis):
+    try:
+        player_id = fetch_player(player_tag)
+    except:
+        player_id = player_tag
     packed_data = redis_client.hget('player_data', player_id)
     unpacked_data = msgpack.unpackb(packed_data)
 
@@ -118,7 +122,14 @@ def retrieve_player_dfs(player_id):
     assists_df = pd.DataFrame.from_dict(unpacked_assists)
     averages_df = pd.DataFrame.from_dict(unpacked_averages)
 
+    all_df = goals_df.join(saves_df['Saves'])
+    all_df = all_df.join(assists_df['Assists'])
+    all_df = all_df.join(averages_df['Averages'])
+    all_df = all_df.rename(columns = {"Averages": "averages", "Assists": "assists", "Saves": "saves", "Goals": "goals", "Date": "date"})
+
     # Convert the unpacked data back into a DataFrame
+    if vis == 0:
+        return all_df
     return goals_df, saves_df, assists_df, averages_df
 
 def fetch_team(team_name):
@@ -169,7 +180,7 @@ def extract_team_data(data, team_id):
     wins_ratio = []
     game_count = []
     data_length = 3
-    for i in range(data_length):
+    for i in range(0, data_length - 1):
         e_id = tEvent_df.iloc[i]['_id'] #taking last event id
         t1eventStats_url = "https://zsr.octane.gg/stats/teams/events?stat=goals&stat=assists&stat=saves&event=" + str(e_id) + "&team=" + str(team_id)
         t1eventStats = requests.get(t1eventStats_url)
@@ -228,7 +239,11 @@ def extract_team_data(data, team_id):
 
     return saves_serialized, goals_serialized, assists_serialized, avg_serialized, wins_ratio_serialized
 
-def retrieve_team_dfs(team_id):
+def retrieve_team_dfs(team_tag):
+    try:
+        team_id = fetch_team(team_tag)
+    except:
+        team_id = team_tag
     packed_data = redis_client.hget('team_data', team_id)
     unpacked_data = msgpack.unpackb(packed_data)
 

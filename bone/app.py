@@ -7,7 +7,7 @@ import pandas as pd
 #from scipy.stats import poisson
 
 from config import redis_client
-from utils import clear_database, scheduler_loop # calc_probability
+from utils import clear_database, scheduler_loop, calc_probability
 from data import fetch_player, fetch_team, retrieve_player_dfs
 from visualization import visualize_player, visualize_team
 
@@ -51,9 +51,10 @@ def fetch_player_data_route():
 
 @app.route('/fetch_team_data_route', methods=['POST'])
 def fetch_team_data_route():
-    team_name = request.form.get('team_name')
-    print(team_name)
-    team_id = fetch_team(team_name)
+    team1 = request.form.get('team1')
+    team2 = request.form.get('team2')
+    print(team1)
+    team_id = fetch_team(team1)
     return visualize_team(team_id)
 
 #@app.route('/visualize_player', methods=['POST'])
@@ -61,16 +62,17 @@ def fetch_team_data_route():
 #    return 0
 
 # prob., modify
-# @app.route('/predict', methods=['POST'])
-# def predict():
-#     player_tag = request.form['playerTag']
-#     line = int(request.form['line'])
-#     stat = request.form['stat']
+@app.route('/predict', methods=['POST'])
+def predict():
+    player_tag = request.form['playerTag']
+    line = int(request.form['line'])
+    stat = request.form['stat']
 
-#     dataframes = retrieve_player_dfs(player_tag)
-#     probability = calc_probability(line, dataframes[stat])
-#     probability = round(probability, 3)
-#     return {'probability': probability}
+    dataframes = retrieve_player_dfs(player_tag, 0)
+    print(dataframes)
+    probability = calc_probability(line, dataframes[stat])
+    probability = round(probability, 3)
+    return {'probability': probability}
 
 # add visualize_team() separately if needed | create a different button w unique id if doing so
 
