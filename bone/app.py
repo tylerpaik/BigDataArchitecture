@@ -1,7 +1,9 @@
 # import for development, hosting locally
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
+import requests
 import schedule
 import threading
+import pandas as pd
 #from scipy.stats import poisson
 
 from config import redis_client
@@ -26,6 +28,19 @@ scheduler_thread.start()
 def index():
     return render_template('rlBetting.html')
 
+@app.route('/teams')
+def teams():
+    unique_team_names = pd.Series(get_team_names())
+    return jsonify(team_names=unique_team_names.tolist())
+
+def get_team_names():
+    url = "https://zsr.octane.gg/teams"
+    response = requests.get(url)
+    response_data = response.json()
+    teams_df = pd.DataFrame(response_data['teams'])
+    unique_team_names = teams_df['name'].unique()
+    return unique_team_names
+
 # Gets all the data we need from the api, update as needed
 @app.route('/fetch_player_data_route', methods=['POST'])
 def fetch_player_data_route():
@@ -41,9 +56,9 @@ def fetch_team_data_route():
     team_id = fetch_team(team_name)
     return visualize_team(team_id)
 
-# @app.route('/visualize_player', methods=['GET'])
-# def visualize_player_route():
-#     return visualize_player()
+#@app.route('/visualize_player', methods=['POST'])
+#def visualize_player_route():
+#    return 0
 
 # prob., modify
 # @app.route('/predict', methods=['POST'])

@@ -5,7 +5,7 @@ import schedule
 import time
 from data import retrieve_player_dfs
 import numpy as np
-from scipy import poisson
+from scipy.stats import poisson
 
 from config import redis_client
 
@@ -49,7 +49,7 @@ def calc_probability(player_id: str, pred: int) -> float:
     # def Poisson(lambda = mean_gas)
     poisson_dist = poisson(mean_goals)
     # store discrete pmf
-    num_goals_prob = poisson_dist.pmf(pred))
+    num_goals_prob = poisson_dist.pmf(pred)
     print("The probability of scoring ", pred, " goals is ", num_goals_prob)
     return num_goals_prob
 # probability fc end
