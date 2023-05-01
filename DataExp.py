@@ -55,7 +55,7 @@ def calcStats(gamerTag):
         game_counts_df = pd.DataFrame(games.items())
         gas_df["startDate"] = currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
         gas_df["games"] = game_counts_df.iloc[0][1]
-        print(gas_df)
+        # print(gas_df)
         if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
             saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
             goals.append(gas_df.iloc[1][1])
@@ -76,7 +76,7 @@ def calcStats(gamerTag):
     saves = np.divide(saves, game_count)
     goals = np.divide(goals, game_count)
     assists = np.divide(assists, game_count)
-    print(saves)
+    # print(saves)
 
     saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
     goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
@@ -90,21 +90,32 @@ def calcStats(gamerTag):
     averages.append(np.average(np.array(assists)))
     avg_df = pd.DataFrame({'Averages': averages, 'Stat Type': ['Saves Avg.', 'Goals Avg.', 'Assists Avg.']})
 
-    fig, axes = plt.subplots(4)
-    sns.lineplot(ax = axes[0], data=saves_df, x='Date', y ='Saves')  #line plot for saves 
-    axes[0].set_title("Saves/game in the last 10 events")
+    fig, axes = plt.subplots(2,2)
+    fig.set_figheight(7)
+    fig.set_figwidth(7)
 
-    sns.lineplot(ax = axes[1], data=goals_df, x ='Date', y = 'Goals') #line plot for goals
-    axes[1].set_title("Goals/game in the last 10 events")
+    sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves', errorbar=None)  #line plot for saves
+    axes[0][0].set_title("Saves/game in the last 10 events")
+    axes[0][0].tick_params(axis='x', rotation = 30)
+    # plt.setp(plt.xticks()[0][0], rotation=30, horizontalalignment='right')
 
-    sns.lineplot(ax = axes[2], data=assists_df, x = 'Date', y = 'Assists') #line plot for assists
-    axes[2].set_title("Assists/game in the last 10 events")
+    sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals', errorbar=None) #line plot for goals
+    axes[0][1].set_title("Goals/game in the last 10 events")
+    axes[0][1].tick_params(axis='x', rotation = 30)
 
-    sns.barplot(ax = axes[3], data=avg_df, x='Stat Type', y='Averages') #bar plot for averages
-    axes[3].set_title("Average Stats for the last 10 events")
 
-    fig.subplots_adjust(hspace=0.5)
-    #plt.show()
+    sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists', errorbar=None) #line plot for assists
+    axes[1][0].set_title("Assists/game in the last 10 events")
+    axes[1][0].tick_params(axis='x', rotation = 30)
+
+
+    sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages', errorbar=None) #bar plot for averages
+    axes[1][1].set_title("Average Stats/game in last 10 events")
+    axes[1][1].tick_params(axis='x', rotation = 30)
+    
+    # fig.subplots_adjust(right= 0.8, left=1,  hspace = .5)
+    fig.tight_layout(pad=0.5)
+    plt.show()
 
 
 def teams_calcStats(team1):
@@ -218,8 +229,8 @@ def teams_calcStats(team1):
 
 
 #------------CONTROLS--------------#
-# calcStats("Noly")
-teams_calcStats("Lights Out!") #G2 Esports, Lights Out!
+calcStats("Noly")
+# teams_calcStats("Lights Out!") #G2 Esports, Lights Out!
 # getID("FaZe Clan")
 
 #testing seaborn html connection

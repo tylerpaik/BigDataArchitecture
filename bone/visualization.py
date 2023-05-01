@@ -16,25 +16,25 @@ def visualize_player(player_id):
     goals_df, saves_df, assists_df, avg_df = retrieve_player_dfs(player_id, 1)
 
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves', errorbar=None)  #line plot for saves
-    axes[0][0].set_title("Saves in the last 10 events")
+    axes[0][0].set_title("Saves/game in the last 10 events")
     axes[0][0].tick_params(axis='x', rotation = 30)
     # plt.setp(plt.xticks()[0][0], rotation=30, horizontalalignment='right')
 
     sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals', errorbar=None) #line plot for goals
-    axes[0][1].set_title("Goals in last 10 events")
+    axes[0][1].set_title("Goals/game in the last 10 events")
     axes[0][1].tick_params(axis='x', rotation = 30)
 
 
     sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists', errorbar=None) #line plot for assists
-    axes[1][0].set_title("Assists in last 10 events")
+    axes[1][0].set_title("Assists/game in the last 10 events")
     axes[1][0].tick_params(axis='x', rotation = 30)
 
 
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages', errorbar=None) #bar plot for averages
-    axes[1][1].set_title("Average Stats in last 10 events")
+    axes[1][1].set_title("Average Stats/game in last 10 events")
     axes[1][1].tick_params(axis='x', rotation = 30)
     
-    fig.subplots_adjust(hspace = .5)
+    fig.tight_layout(pad=0.5)
     # replace plt.show() here
     # save the plots as a figure
     fig_buffer = BytesIO()
@@ -67,14 +67,14 @@ def visualize_team(team_id):
     axes[1][0].tick_params(axis='x', rotation = 30)
 
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages') #bar plot for averages
-    axes[1][1].set_title("Average Stats for the last 10 events")
+    axes[1][1].set_title("Average Stats/game for the last 10 events")
     axes[1][1].tick_params(axis='x', rotation = 30)
 
 
     #sns.lineplot(ax = axes[1][1], data=win_loss_df, x = 'Date', y='Wins/Total Games') #lineplot for win/total games for each event
     #axes[1][1].set_title("Wins/Total games for the last 10 events")
     #axes[1][1].tick_params(axis='x', rotation = 30)
-    fig.subplots_adjust(hspace=0.5)
+    fig.tight_layout(pad=0.5)
     fig_buffer = BytesIO()
     plt.savefig(fig_buffer, format='png') #returnable graphs
     fig_buffer.seek(0)

@@ -48,9 +48,10 @@ def extract_player_data(data, player_id):
     saves = []
     assists = []
     goals = []
-    e_id = event_df.iloc[0]['_id'] #changing every time???
+    e_id = event_df.iloc[0]['_id']
     print("event id", e_id)
     dates = []
+    game_count = []
     data_length = 11
     for i in range(data_length):
         e_id = event_df.iloc[i]['_id'] #taking last event id
@@ -61,26 +62,34 @@ def extract_player_data(data, player_id):
         currEventStats_df.sort_values(by="startDate", axis=0, inplace=True) #sorting dataframe based on start date
         gas = currEventStats_df.iloc[0]['stats']
         gas_df = pd.DataFrame(gas.items()) #putting event stats into dataframe
+        games = currEventStats_df.iloc[0]["games"] #adding matches for averages
+        game_counts_df = pd.DataFrame(games.items())
         gas_df["startDate"] = currEventStats_df.iloc[0]["startDate"] #adding dates for visualization
+        gas_df["games"] = game_counts_df.iloc[0][1]
         if gas_df.iloc[2][1] != None and gas_df.iloc[1][1] != None and gas_df.iloc[0][1] != None and gas_df.iloc[0]["startDate"] != None: #making sure we aren't adding nan values
             saves.append(gas_df.iloc[2][1]) #adding stats to lists with dates
             goals.append(gas_df.iloc[1][1])
             assists.append(gas_df.iloc[0][1])
             dates.append(gas_df.iloc[0]["startDate"])
+            game_count.append(gas_df.iloc[0]['games'])
         else:
             data_length +=1
     for j in range(len(dates)):
         dates[j] = dates[j][:7] #get only date from timestamp string (makes it more readable)
-    temp1 = sorted(zip(dates, saves, goals, assists)) #sorting parallel lists
+    temp1 = sorted(zip(dates, game_count, saves, goals, assists)) #sorting parallel lists
     temp2 = list(zip(*temp1)) #unzipping sorted data
-    dates = list(temp2[0])
-    saves = list(temp2[1])
-    goals = list(temp2[2])
-    assists = list(temp2[3])
+    dates = np.array(temp2[0])
+    game_count = np.array(temp2[1])
+    saves = np.array(temp2[2])
+    goals = np.array(temp2[3])
+    assists = np.array(temp2[4])
     for dateIndex in range(len(dates)):
         yr = dates[dateIndex][2:4]
         month = dates[dateIndex][-2:]
         dates[dateIndex] = month + "-" + yr
+    saves = np.divide(saves, game_count) #[stat]/game calculations
+    goals = np.divide(goals, game_count)
+    assists = np.divide(assists, game_count)
     saves_df = pd.DataFrame({'Saves': saves, 'Date': dates})#sorted data put into dataframe
     goals_df = pd.DataFrame({'Goals': goals, 'Date': dates})
     assists_df = pd.DataFrame({'Assists': assists, 'Date': dates})
@@ -235,7 +244,7 @@ def extract_team_data(data, team_id):
     goals_serialized = msgpack.packb(goals_df.to_dict())
     assists_serialized = msgpack.packb(assists_df.to_dict())
     avg_serialized = msgpack.packb(avg_df.to_dict())
-    wins_ratio_serialized = msgpack.packb(avg_df.to_dict())
+    wins_ratio_serialized = msgpack.packb(wins_ratio_df.to_dict())
 
     return saves_serialized, goals_serialized, assists_serialized, avg_serialized, wins_ratio_serialized
 
