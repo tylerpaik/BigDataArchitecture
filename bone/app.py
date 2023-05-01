@@ -74,11 +74,12 @@ def fetch_team_data_route():
 def predict():
     player_tag = request.form['playerTag']
     line = int(request.form['line'])
-    stat = request.form['stat']
+    stat_name = request.form['stat']
+    print(stat_name)
+    all_df = retrieve_player_dfs(player_tag, 0)
 
-    dataframes = retrieve_player_dfs(player_tag, 0)
-    print(dataframes)
-    probability = calc_probability(line, dataframes[stat])
+    probability = calc_probability(line, all_df[[stat_name]])  # pass selected column to calc_probability
+
     probability = round(probability, 3)
     return {'probability': probability}
 

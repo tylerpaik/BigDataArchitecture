@@ -31,20 +31,19 @@ def scheduler_loop():
 #     return jsonify(team_names=unique_team_names.tolist())
 
 #Pred is for number of goals user wants probability for
-def calc_probability(n, stat):
-    num_stat = np.sum(stat)
-
-    # if n_gas < 0:
-    #     raise ValueError("The number of goals/assists/scores can't be negative.")
-    # # stats are always in the first column, extract as a list
-    # data = df.iloc[:, 0].tolist()
-
+from scipy.stats import poisson
+def calc_probability(n_gas: int, df: pd.DataFrame) -> float:
+    if n_gas < 0:
+        raise ValueError("The number of goals/assists/scores can't be negative.")
+    # stats are always in the first column, extract as a list
+    data = df.iloc[:, 0].tolist()
     # calculate the mean nr of goals (lambda)
-    mean_stat = num_stat / stat.shape[0]
+    mean_gas = sum(data) / len(data)
+    print("\nlambda is ", mean_gas)
     # def Poisson(lambda = mean_gas)
+    poisson_dist = poisson(mean_gas)
     # store discrete pmf
-    num_goals_prob = poisson.cdf(n, mean_stat)
-    print(num_goals_prob)
-    return 1-num_goals_prob
+    n_gas_prob = poisson_dist.pmf(n_gas)
+    print("The probability of scoring ", n_gas, " units is ", n_gas_prob)
+    return n_gas_prob
 # probability fc end
-
