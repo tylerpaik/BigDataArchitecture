@@ -55,19 +55,19 @@ def visualize_team(team_id):
     print(saves_df)
 
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves
-    axes[0][0].set_title("Saves/game in the last 10 events")
+    axes[0][0].set_title("Saves/game in the last 5 events")
     axes[0][0].tick_params(axis='x', rotation = 30)
 
     sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals') #line plot for goals
-    axes[0][1].set_title("Goals/game in the last 10 events")
+    axes[0][1].set_title("Goals/game in the last 5 events")
     axes[0][1].tick_params(axis='x', rotation = 30)
 
     sns.lineplot(ax = axes[1][0], data=assists_df, x = 'Date', y = 'Assists') #line plot for assists
-    axes[1][0].set_title("Assists/game in the last 10 events")
+    axes[1][0].set_title("Assists/game in the last 5 events")
     axes[1][0].tick_params(axis='x', rotation = 30)
 
     sns.barplot(ax = axes[1][1], data=avg_df, x='Stat Type', y='Averages') #bar plot for averages
-    axes[1][1].set_title("Average Stats/game for the last 10 events")
+    axes[1][1].set_title("Average Stats/game for the last 5 events")
     axes[1][1].tick_params(axis='x', rotation = 30)
 
 

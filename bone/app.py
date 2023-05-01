@@ -17,11 +17,11 @@ app = Flask(__name__, static_folder = "static")
 # store them locally to avoid multiple api calls
 
 # Schedule the 'clear_database' function to run every hour
-#schedule.every(1).hours.do(clear_database)
+schedule.every(1).hours.do(clear_database)
 
 # Start the scheduling loop in a separate thread
-#scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
-#scheduler_thread.start()
+scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
+scheduler_thread.start()
 
 # assign routes within Flask
 @app.route('/')

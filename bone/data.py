@@ -188,7 +188,7 @@ def extract_team_data(data, team_id):
     dates = []
     wins_ratio = []
     game_count = []
-    data_length = 3
+    data_length = 6
     for i in range(0, data_length - 1):
         e_id = tEvent_df.iloc[i]['_id'] #taking last event id
         t1eventStats_url = "https://zsr.octane.gg/stats/teams/events?stat=goals&stat=assists&stat=saves&event=" + str(e_id) + "&team=" + str(team_id)
