@@ -48,7 +48,7 @@ def extract_player_data(data, player_id):
     saves = []
     assists = []
     goals = []
-    e_id = event_df.iloc[0]['_id']
+    e_id = event_df.iloc[0]['_id'] #changing every time???
     print("event id", e_id)
     dates = []
     data_length = 11
@@ -156,7 +156,7 @@ def fetch_team(team_name):
             }
             
             team_data_serialized = msgpack.packb(team_data)
-            redis_client.hset('player_data', team_id, team_data_serialized)
+            redis_client.hset('team_data', team_id, team_data_serialized)
             return team_id
             #jsonify({"message": "Success."}), 200
     else:
@@ -180,7 +180,6 @@ def extract_team_data(data, team_id):
     wins_ratio = []
     game_count = []
     data_length = 3
-    
     for i in range(0, data_length - 1):
         e_id = tEvent_df.iloc[i]['_id'] #taking last event id
         t1eventStats_url = "https://zsr.octane.gg/stats/teams/events?stat=goals&stat=assists&stat=saves&event=" + str(e_id) + "&team=" + str(team_id)
@@ -236,11 +235,15 @@ def extract_team_data(data, team_id):
     goals_serialized = msgpack.packb(goals_df.to_dict())
     assists_serialized = msgpack.packb(assists_df.to_dict())
     avg_serialized = msgpack.packb(avg_df.to_dict())
-    wins_ratio_serialized = msgpack.packb(wins_ratio_df.to_dict())
+    wins_ratio_serialized = msgpack.packb(avg_df.to_dict())
 
     return saves_serialized, goals_serialized, assists_serialized, avg_serialized, wins_ratio_serialized
 
-def retrieve_team_dfs(team_id):
+def retrieve_team_dfs(team_tag):
+    try:
+        team_id = fetch_team(team_tag)
+    except:
+        team_id = team_tag
     packed_data = redis_client.hget('team_data', team_id)
     unpacked_data = msgpack.unpackb(packed_data)
 
@@ -260,8 +263,9 @@ def retrieve_team_dfs(team_id):
     saves_df = pd.DataFrame.from_dict(unpacked_saves)
     assists_df = pd.DataFrame.from_dict(unpacked_assists)
     averages_df = pd.DataFrame.from_dict(unpacked_averages)
-    win_loss_df = pd.DataFrame.from_dict(unpacked_win_loss)
+    #win_loss_df = pd.DataFrame.from_dict(unpacked_win_loss)
+    #print(win_loss_df)
 
     # Convert the unpacked data back into a DataFrame
-    return goals_df, saves_df, assists_df, averages_df, win_loss_df
+    return goals_df, saves_df, assists_df, averages_df #, win_loss_df
     

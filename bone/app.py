@@ -17,11 +17,11 @@ app = Flask(__name__, static_folder = "static")
 # store them locally to avoid multiple api calls
 
 # Schedule the 'clear_database' function to run every hour
-schedule.every(1).hours.do(clear_database)
+#schedule.every(1).hours.do(clear_database)
 
 # Start the scheduling loop in a separate thread
-scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
-scheduler_thread.start()
+#scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
+#scheduler_thread.start()
 
 # assign routes within Flask
 @app.route('/')
@@ -52,8 +52,7 @@ def fetch_player_data_route():
 @app.route('/fetch_team_data_route', methods=['POST'])
 def fetch_team_data_route():
     team1 = request.form.get('team1')
-    #team2 = request.form.get('team2')
-    print(team1)
+    team2 = request.form.get('team2')
     team_id = fetch_team(team1)
     return visualize_team(team_id)
 
