@@ -52,6 +52,7 @@ def visualize_team(team_id):
     fig.set_figwidth(7)
 
     goals_df, saves_df, assists_df, avg_df = retrieve_team_dfs(team_id) #, win_loss_df = retrieve_team_dfs(team_id)
+    print(saves_df)
 
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves
     axes[0][0].set_title("Saves/game in the last 10 events")

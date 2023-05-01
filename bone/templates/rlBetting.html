@@ -239,8 +239,8 @@
           });
 
           $("#visualizeBtn").click(function () {
-              let playerName = $("#playerName").val();
-              if (playerName) {
+              let playerName = $("#player_tags").val();
+              if (playerName != "Select gamertag") {
                   $("#playerSearch").hide();
                   $("#statsBtn").hide();
                   $("#compareBtn").hide();
