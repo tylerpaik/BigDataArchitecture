@@ -180,6 +180,7 @@ def extract_team_data(data, team_id):
     wins_ratio = []
     game_count = []
     data_length = 3
+    
     for i in range(0, data_length - 1):
         e_id = tEvent_df.iloc[i]['_id'] #taking last event id
         t1eventStats_url = "https://zsr.octane.gg/stats/teams/events?stat=goals&stat=assists&stat=saves&event=" + str(e_id) + "&team=" + str(team_id)
@@ -235,15 +236,11 @@ def extract_team_data(data, team_id):
     goals_serialized = msgpack.packb(goals_df.to_dict())
     assists_serialized = msgpack.packb(assists_df.to_dict())
     avg_serialized = msgpack.packb(avg_df.to_dict())
-    wins_ratio_serialized = msgpack.packb(avg_df.to_dict())
+    wins_ratio_serialized = msgpack.packb(wins_ratio_df.to_dict())
 
     return saves_serialized, goals_serialized, assists_serialized, avg_serialized, wins_ratio_serialized
 
-def retrieve_team_dfs(team_tag):
-    try:
-        team_id = fetch_team(team_tag)
-    except:
-        team_id = team_tag
+def retrieve_team_dfs(team_id):
     packed_data = redis_client.hget('team_data', team_id)
     unpacked_data = msgpack.unpackb(packed_data)
 

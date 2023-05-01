@@ -8,7 +8,6 @@ from data import retrieve_player_dfs, retrieve_team_dfs
 
 def visualize_player(player_id):
     plt.style.use('dark_background')
-    # plt.figure(facecolor='blue')
     fig, axes = plt.subplots(2,2)
     fig.set_figheight(7)
     fig.set_figwidth(7)
@@ -50,6 +49,7 @@ def visualize_team(team_id):
     fig, axes = plt.subplots(2,3)
 
     goals_df, saves_df, assists_df, avg_df, win_loss_df = retrieve_team_dfs(team_id)
+    print(win_loss_df)
 
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves')  #line plot for saves
     axes[0][0].set_title("Saves/game in the last 10 events")

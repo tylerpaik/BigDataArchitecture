@@ -52,7 +52,7 @@ def fetch_player_data_route():
 @app.route('/fetch_team_data_route', methods=['POST'])
 def fetch_team_data_route():
     team1 = request.form.get('team1')
-    team2 = request.form.get('team2')
+    #team2 = request.form.get('team2')
     print(team1)
     team_id = fetch_team(team1)
     return visualize_team(team_id)
