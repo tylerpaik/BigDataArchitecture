@@ -41,14 +41,14 @@ def get_team_names():
     unique_team_names = teams_df['name'].unique()
     return unique_team_names
 
-# get all player tags
+@app.route('/players')
 def get_player_tags():
     url = "https://zsr.octane.gg/players"
     response = requests.get(url)
     response_data = response.json()
     players_df = pd.DataFrame(response_data['players'])
     unique_player_tags = players_df['tag'].unique()
-    return unique_player_tags
+    return jsonify(player_tags = unique_player_tags.tolist())
 
 # Gets all the data we need from the api, update as needed
 @app.route('/fetch_player_data_route', methods=['POST'])
@@ -68,12 +68,6 @@ def fetch_team_data_route():
 #@app.route('/visualize_player', methods=['POST'])
 #def visualize_player_route():
 #    return 0
-
-# load player tags to /players
-@app.route('/players')
-def players():
-    unique_player_tags = pd.Series(get_player_tags())
-    return jsonify(player_tags=unique_player_tags.tolist()) 
 
 # prob., modify
 @app.route('/predict', methods=['POST'])

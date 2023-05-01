@@ -84,13 +84,10 @@
           </div>
           <div class="container" id="playerSearch" style="display: none;">
               <div class="searchbar">
-                  <input type="text" id="playerName" class="form-control" placeholder="Enter player name" onkeyup="showPlayers()">
+                  <select id="player_tags" class="select">
+                      <option selected>Select gamertag</option>
+                  </select>
                   <button id="visualizeBtn" type="submit">Visualize</button>
-              </div>
-              <div>
-                <select id="player_tags" class="select" onclick="setInputTag()">
-                  <option selected>Select gamertag</option>
-                </select>
               </div>
           </div>
           <div class="container" id="teamSearch" style="display: none;">
@@ -208,7 +205,7 @@
                 $("#player_tags").append(`<option value="${player_tags[i]}">${player_tags[i]}</option>`); // #player_tags
               }
               });
-          });
+          });;
 
           $("#compareBtn").click(function () {
               $("#playerSearch").hide();
