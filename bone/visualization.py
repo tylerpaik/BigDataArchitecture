@@ -8,7 +8,6 @@ from data import retrieve_player_dfs, retrieve_team_dfs
 
 def visualize_player(player_id):
     plt.style.use('dark_background')
-    # plt.figure(facecolor='blue')
     fig, axes = plt.subplots(2,2)
     fig.set_figheight(7)
     fig.set_figwidth(7)
@@ -18,7 +17,6 @@ def visualize_player(player_id):
     sns.lineplot(ax = axes[0][0], data=saves_df, x='Date', y ='Saves', errorbar=None)  #line plot for saves
     axes[0][0].set_title("Saves/game in the last 10 events")
     axes[0][0].tick_params(axis='x', rotation = 30)
-    # plt.setp(plt.xticks()[0][0], rotation=30, horizontalalignment='right')
 
     sns.lineplot(ax = axes[0][1], data=goals_df, x ='Date', y = 'Goals', errorbar=None) #line plot for goals
     axes[0][1].set_title("Goals/game in the last 10 events")
@@ -70,10 +68,6 @@ def visualize_team(team_id):
     axes[1][1].set_title("Average Stats/game for the last 5 events")
     axes[1][1].tick_params(axis='x', rotation = 30)
 
-
-    #sns.lineplot(ax = axes[1][1], data=win_loss_df, x = 'Date', y='Wins/Total Games') #lineplot for win/total games for each event
-    #axes[1][1].set_title("Wins/Total games for the last 10 events")
-    #axes[1][1].tick_params(axis='x', rotation = 30)
     fig.tight_layout(pad=0.5)
     fig_buffer = BytesIO()
     plt.savefig(fig_buffer, format='png') #returnable graphs
