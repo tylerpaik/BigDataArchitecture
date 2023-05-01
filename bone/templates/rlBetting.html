@@ -69,15 +69,15 @@
               <h1>Player and Team Stats Visualization Page</h1>
             </div>
             <div class="desc" id="visDesc">
-              <p>Select "Stats" to see a player's individual stats in the last 10 events and select "Compare" to compare two teams.</p>
+              <p>Select "Player" to see a player's individual stats in the last 10 events and select "Team" to see a team's stats.</p>
             </div>
             <div class="subtitle" id="visLoad" style="display: none;">
               <h2>Loading stats may take a moment.</h2>
             </div>
           </div>
           <div class="container">
-              <button id="statsBtn" class="bigbutton">Stats</button>
-              <button id="compareBtn" class="bigbutton">Compare</button>
+              <button id="statsBtn" class="bigbutton">Player</button>
+              <button id="compareBtn" class="bigbutton">Team</button>
           </div>
           <div class="container" id = "returnBtn" style="display: none;">
             <button id="return" class="bigbutton">Return to Search</button>
@@ -96,10 +96,7 @@
           <div class="container" id="teamSearch" style="display: none;">
               <div class="searchbar">
                   <select id="team1" class="select">
-                      <option selected>Select team 1</option>
-                  </select>
-                  <select id="team2" class="select">
-                      <option selected>Select team 2</option>
+                      <option selected>Select team</option>
                   </select>
                   <button id="compareVisualizeBtn" type="submit">Visualize</button>
               </div>
@@ -124,7 +121,7 @@
               <h1>Betting Line Predictor</h1>
             </div>
             <div class="desc" id="predDesc">
-              <p>Null</p>
+              <p>See how likely your favorite player is to get however many of a specified stat.</p>
             </div>
             <div class="subtitle" id="predLoad" style="display: none;">
               <h2>Loading predictions may take a moment.</h2>
@@ -272,14 +269,15 @@
                   $("#compareBtn").hide();
                   $("#returnBtn").show();
                   $("#visTitle").hide();
+                  $("#teamSearch").hide();
                   $("#visDesc").hide();
                   $("#visLoad").show();
-                  $.post('/fetch_team_data_route', { team1: team1 }, function (data) {
+                  $.post('/fetch_team_data_route', { team1: team1, team2: team2 }, function (data) {
                       $("#charts").show();
                       $("#chartImage").attr("src", "data:image/png;base64," + data.image_data);
                   });
               } else {
-                  alert("Please enter team names.");
+                  alert("Please select a team");
               }
           });
       });
