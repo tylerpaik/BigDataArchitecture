@@ -69,35 +69,35 @@
               <h1>Player and Team Stats Visualization Page</h1>
             </div>
             <div class="desc" id="visDesc">
-              <p>Select "Stats" to see a player's individual stats in the last 10 events and select "Compare" to compare two teams.</p>
+              <p>Select "Player" to see a player's individual stats in the last 10 events and select "Team" to see a team's stats.</p>
             </div>
             <div class="subtitle" id="visLoad" style="display: none;">
               <h2>Loading stats may take a moment.</h2>
             </div>
           </div>
           <div class="container">
-              <button id="statsBtn" class="bigbutton">Stats</button>
-              <button id="compareBtn" class="bigbutton">Compare</button>
+              <button id="statsBtn" class="bigbutton">Player</button>
+              <button id="compareBtn" class="bigbutton">Team</button>
           </div>
           <div class="container" id = "returnBtn" style="display: none;">
             <button id="return" class="bigbutton">Return to Search</button>
           </div>
           <div class="container" id="playerSearch" style="display: none;">
               <div class="searchbar">
-                  <input type="text" id="playerName" class="form-control" placeholder="Enter player name">
+                  <select id="player_tags" class="select">
+                      <option selected>Select gamertag</option>
+                  </select>
                   <button id="visualizeBtn" type="submit">Visualize</button>
               </div>
           </div>
           <div class="container" id="teamSearch" style="display: none;">
               <div class="searchbar">
                   <select id="team1" class="select">
-                      <option selected>Select team 1</option>
-                  </select>
-                  <select id="team2" class="select">
-                      <option selected>Select team 2</option>
+                      <option selected>Select team</option>
                   </select>
                   <button id="compareVisualizeBtn" type="submit">Visualize</button>
               </div>
+              
           </div>
           <div class="container" id="charts" style="display: none;">
               <div class="col text-center">
@@ -118,7 +118,7 @@
               <h1>Betting Line Predictor</h1>
             </div>
             <div class="desc" id="predDesc">
-              <p>Null</p>
+              <p>See how likely your favorite player is to get however many of a specified stat.</p>
             </div>
             <div class="subtitle" id="predLoad" style="display: none;">
               <h2>Loading predictions may take a moment.</h2>
@@ -149,11 +149,63 @@
 
 
     <script>
+      function showPlayers() {
+        //console.log("showPlayers -> matched names in select");
+        const input = document.getElementById('playerName').value.toLowerCase();
+        const options = document.querySelectorAll('#player_tags option');
+        for (let i = 0; i < player_tags.length; i++) {
+          const text = player_tags[i].text.toLowerCase();
+          if (text.includes(input)) {
+            options[i].style.display = ''; 
+            console.log("Option added: " + text);
+          } 
+          else {
+            options[i].style.display = 'none';
+            console.log("Option rm: " + text);
+          }
+        }
+      };
+      function setInputTag() {
+        //console.log("setInputTag activated");
+        const playerTagsSelect = document.querySelector('#player_tags');
+        playerTagsSelect.addEventListener('change', f);
+        //console.log(playerTagsSelect);
+      };
+
+      function f() {
+        // code to execute when an option is selected
+        console.log(document.getElementById("player_tags").value);
+        var selectName = document.getElementById("player_tags").value;
+        document.getElementById("playerName").value = selectName;
+        console.log('Option selected: ' + selectName);
+      };
+
       $(document).ready(function () {
           $("#statsBtn").click(function () {
               $("#teamSearch").hide();
               $("#playerSearch").show();
-          });
+              $.getJSON('/players', function (data) {
+              const player_tags = data.player_tags;
+              const options = document.querySelectorAll('#player_tags option');
+              var isFound = false;
+              //console.log(player_tags);
+              for (let i = 0; i < player_tags.length; i++) {
+                //console.log(player_tags[i]);
+                for (let j = 0; j < options.length; j++) { // name already in list, break for loop
+                  if ( player_tags[i] == options[j].value ) {
+                    isFound = true;
+                    break; 
+                  } 
+                }
+                if (isFound)  // should continue to next itr in main for loop. used to skip duplicate after vizButton
+                {
+                  isFound = false;
+                  continue;
+                }
+                $("#player_tags").append(`<option value="${player_tags[i]}">${player_tags[i]}</option>`); // #player_tags
+              }
+              });
+          });;
 
           $("#compareBtn").click(function () {
               $("#playerSearch").hide();
@@ -187,8 +239,8 @@
           });
 
           $("#visualizeBtn").click(function () {
-              let playerName = $("#playerName").val();
-              if (playerName) {
+              let playerName = $("#player_tags").val();
+              if (playerName != "Select gamertag") {
                   $("#playerSearch").hide();
                   $("#statsBtn").hide();
                   $("#compareBtn").hide();
@@ -214,6 +266,7 @@
                   $("#compareBtn").hide();
                   $("#returnBtn").show();
                   $("#visTitle").hide();
+                  $("#teamSearch").hide();
                   $("#visDesc").hide();
                   $("#visLoad").show();
                   $("#teamSearch").hide();
@@ -222,7 +275,7 @@
                       $("#chartImage").attr("src", "data:image/png;base64," + data.image_data);
                   });
               } else {
-                  alert("Please enter team names.");
+                  alert("Please select a team");
               }
           });
       });

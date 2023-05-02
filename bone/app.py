@@ -41,6 +41,15 @@ def get_team_names():
     unique_team_names = teams_df['name'].unique()
     return unique_team_names
 
+@app.route('/players')
+def get_player_tags():
+    url = "https://zsr.octane.gg/players"
+    response = requests.get(url)
+    response_data = response.json()
+    players_df = pd.DataFrame(response_data['players'])
+    unique_player_tags = players_df['tag'].unique()
+    return jsonify(player_tags = unique_player_tags.tolist())
+
 # Gets all the data we need from the api, update as needed
 @app.route('/fetch_player_data_route', methods=['POST'])
 def fetch_player_data_route():
@@ -53,7 +62,6 @@ def fetch_player_data_route():
 def fetch_team_data_route():
     team1 = request.form.get('team1')
     team2 = request.form.get('team2')
-    print(team1)
     team_id = fetch_team(team1)
     return visualize_team(team_id)
 
@@ -66,11 +74,12 @@ def fetch_team_data_route():
 def predict():
     player_tag = request.form['playerTag']
     line = int(request.form['line'])
-    stat = request.form['stat']
+    stat_name = request.form['stat']
+    print(stat_name)
+    all_df = retrieve_player_dfs(player_tag, 0)
 
-    dataframes = retrieve_player_dfs(player_tag, 0)
-    print(dataframes)
-    probability = calc_probability(line, dataframes[stat])
+    probability = calc_probability(line, all_df[[stat_name]])  # pass selected column to calc_probability
+
     probability = round(probability, 3)
     return {'probability': probability}
 
