@@ -216,6 +216,7 @@
                   $("#visTitle").hide();
                   $("#visDesc").hide();
                   $("#visLoad").show();
+                  $("#teamSearch").hide();
                   $.post('/fetch_team_data_route', { team1: team1, team2: team2 }, function (data) {
                       $("#charts").show();
                       $("#chartImage").attr("src", "data:image/png;base64," + data.image_data);
