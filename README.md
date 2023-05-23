@@ -16,7 +16,7 @@ How to use locally:
 
 . Type 'make run' to run the code.
 
-The website can now be viewed on 127.0.0.1/5000 . Once you are done, be sure to type 'make clean' to stop it from running.
+The website can now be viewed on 127.0.0.1:5000 . Once you are done, be sure to type 'make clean' to stop it from running.
 
 ---
 
